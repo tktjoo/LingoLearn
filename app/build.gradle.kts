@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.linguaflow.app"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -59,7 +59,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
 
     // Azure Speech SDK
-    implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.38.0")
+    implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.44.0")
 
     // Jetpack Compose + Material 3
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
