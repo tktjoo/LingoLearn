@@ -100,3 +100,6 @@ dependencies {
 dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 }
+dependencies {
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+}
