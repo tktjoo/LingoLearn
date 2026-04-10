@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeMenuScreen(
-    onNavigateToSpeechPractice: () -> Unit = {}
+    onNavigateToSpeechPractice: () -> Unit = {},
+    onNavigateToRoleplay: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -44,6 +45,20 @@ fun PracticeMenuScreen(
             ) {
                 Text(
                     text = "Speech Practice",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onNavigateToRoleplay,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = "AI Roleplay Conversation",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
