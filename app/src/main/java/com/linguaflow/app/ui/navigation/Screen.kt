@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     object Practice : Screen("practice")
     object SpeechPractice : Screen("speech_practice")
     object SpeechResult : Screen("speech_result")
+    object Roleplay : Screen("roleplay")
     object Streak : Screen("streak")
     object Profile : Screen("profile")
 }

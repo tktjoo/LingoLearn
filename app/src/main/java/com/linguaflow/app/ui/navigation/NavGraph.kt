@@ -14,6 +14,7 @@ import com.linguaflow.app.ui.screens.home.HomeScreen
 import com.linguaflow.app.ui.screens.practice.PracticeMenuScreen
 import com.linguaflow.app.ui.screens.practice.SpeechPracticeScreen
 import com.linguaflow.app.ui.screens.profile.ProfileScreen
+import com.linguaflow.app.ui.screens.roleplay.RoleplayScreen
 import com.linguaflow.app.ui.screens.speech.SpeechResultScreen
 import com.linguaflow.app.ui.screens.streak.StreakScreen
 import com.linguaflow.app.ui.screens.vocabulary.AddVocabularyScreen
@@ -54,23 +55,16 @@ fun NavGraph(
         }
         composable(Screen.Practice.route) {
             PracticeMenuScreen(
-                onNavigateToSpeechPractice = { navController.navigate(Screen.SpeechPractice.route) }
+                onNavigateToSpeechPractice = { navController.navigate(Screen.SpeechPractice.route) },
+                onNavigateToRoleplay = { navController.navigate(Screen.Roleplay.route) }
             )
         }
         composable(Screen.SpeechPractice.route) {
-            // A common pattern to share the evaluation result between the practice and result screen
-            // is to scope the ViewModel to the parent graph or pass the result via a shared data store/ViewModel.
-            // For simplicity in this scaffold, we'll keep the SpeechViewModel at this route, but to pass
-            // the complex data object to the next route we will use a shared ViewModel approach.
             val viewModel: SpeechViewModel = hiltViewModel()
 
             SpeechPracticeScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToResult = { evaluation ->
-                    // In a real app, passing complex objects through Compose Navigation routes directly isn't recommended.
-                    // You would typically save it to a repository/SharedViewModel and read it on the next screen.
-                    // For scaffolding purposes, we navigate to the result route and the result screen will observe
-                    // the shared ViewModel state.
                     navController.navigate(Screen.SpeechResult.route)
                 },
                 viewModel = viewModel
@@ -83,7 +77,6 @@ fun NavGraph(
             val viewModel: SpeechViewModel = hiltViewModel(parentEntry)
             val uiState = viewModel.uiState.value
 
-            // Cast to ensure we have a result. If not, fallback or pop stack.
             if (uiState is com.linguaflow.app.ui.screens.speech.SpeechUiState.Result) {
                 SpeechResultScreen(
                     evaluation = uiState.evaluation,
@@ -93,9 +86,13 @@ fun NavGraph(
                     }
                 )
             } else {
-                // Fallback if accessed incorrectly
                 navController.popBackStack()
             }
+        }
+        composable(Screen.Roleplay.route) {
+            RoleplayScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.Streak.route) {
             StreakScreen()
