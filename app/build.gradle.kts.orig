@@ -21,6 +21,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        ndk {
+            // Azure Speech SDK 1.38.0 does not align x86/x86_64 to 16KB yet.
+            // Exclude these ABI architectures from the build to prevent install errors on Android 15 emulators/devices.
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
     }
 
     buildTypes {
@@ -45,6 +50,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }
