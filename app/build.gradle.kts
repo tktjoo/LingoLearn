@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -41,7 +43,26 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
+    val localProperties = Properties()
+    val localPropertiesFile = project.rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { stream ->
+            localProperties.load(stream)
+        }
+    }
+    val azureKey = localProperties.getProperty("AZURE_SPEECH_KEY") ?: "YOUR_AZURE_SUBSCRIPTION_KEY"
+    val azureRegion = localProperties.getProperty("AZURE_SPEECH_REGION") ?: "YOUR_AZURE_REGION"
+    val openAiKey = localProperties.getProperty("OPENAI_API_KEY") ?: "YOUR_OPENAI_API_KEY"
+
+    defaultConfig {
+        buildConfigField("String", "AZURE_SPEECH_KEY", "\"$azureKey\"")
+        buildConfigField("String", "AZURE_SPEECH_REGION", "\"$azureRegion\"")
+        buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
