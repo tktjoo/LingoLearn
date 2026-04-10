@@ -1,0 +1,11 @@
+package com.linguaflow.app.domain.repository
+
+import com.linguaflow.app.data.local.db.entity.VocabularyEntity
+import kotlinx.coroutines.flow.Flow
+
+interface VocabularyRepository {
+    fun getAllVocabulary(): Flow<List<VocabularyEntity>>
+    suspend fun insertVocabulary(vocabulary: VocabularyEntity): Long
+    suspend fun updateVocabulary(vocabulary: VocabularyEntity)
+    suspend fun deleteVocabulary(vocabulary: VocabularyEntity)
+}
