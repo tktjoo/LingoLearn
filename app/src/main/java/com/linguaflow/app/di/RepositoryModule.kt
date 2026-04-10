@@ -25,4 +25,16 @@ abstract class RepositoryModule {
     abstract fun bindStreakRepository(
         streakRepositoryImpl: StreakRepositoryImpl
     ): StreakRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSpeechRepository(
+        speechRepositoryImpl: com.linguaflow.app.data.repository.SpeechRepositoryImpl
+    ): com.linguaflow.app.domain.repository.SpeechRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindConversationRepository(
+        conversationRepositoryImpl: com.linguaflow.app.data.repository.ConversationRepositoryImpl
+    ): com.linguaflow.app.domain.repository.ConversationRepository
 }
