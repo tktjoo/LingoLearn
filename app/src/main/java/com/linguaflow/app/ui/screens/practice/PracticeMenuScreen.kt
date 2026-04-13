@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PracticeMenuScreen(
     onNavigateToSpeechPractice: () -> Unit = {},
-    onNavigateToRoleplay: () -> Unit = {}
+    onNavigateToRoleplay: () -> Unit = {},
+    onNavigateToFlashcards: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -66,14 +67,13 @@ fun PracticeMenuScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { /* TODO: Navigate to Flashcards */ },
+                onClick = onNavigateToFlashcards,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                enabled = false
+                    .height(56.dp)
             ) {
                 Text(
-                    text = "Flashcards (Coming Soon)",
+                    text = "Vocabulary Flashcards",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
