@@ -33,7 +33,10 @@ fun NavGraph(
         modifier = Modifier.padding(paddingValues)
     ) {
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToPractice = { navController.navigate(Screen.Practice.route) },
+                onNavigateToAddVocabulary = { navController.navigate(Screen.AddVocabulary.route) }
+            )
         }
         composable(Screen.Vocabulary.route) {
             VocabularyListScreen(
@@ -81,12 +84,14 @@ fun NavGraph(
                 SpeechResultScreen(
                     evaluation = uiState.evaluation,
                     onNavigateBack = {
-                        viewModel.resetState()
                         navController.popBackStack(Screen.Practice.route, false)
+                        viewModel.resetState()
                     }
                 )
             } else {
-                navController.popBackStack()
+                androidx.compose.runtime.LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
             }
         }
         composable(Screen.Roleplay.route) {
