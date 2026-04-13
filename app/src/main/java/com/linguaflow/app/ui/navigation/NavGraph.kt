@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import com.linguaflow.app.domain.model.SpeechEvaluation
 import com.linguaflow.app.ui.screens.home.HomeScreen
 import com.linguaflow.app.ui.screens.practice.PracticeMenuScreen
+import com.linguaflow.app.ui.screens.practice.FlashcardScreen
 import com.linguaflow.app.ui.screens.practice.SpeechPracticeScreen
 import com.linguaflow.app.ui.screens.profile.ProfileScreen
 import com.linguaflow.app.ui.screens.roleplay.RoleplayScreen
@@ -66,7 +67,13 @@ fun NavGraph(
         composable(Screen.Practice.route) {
             PracticeMenuScreen(
                 onNavigateToSpeechPractice = { navController.navigate(Screen.SpeechPractice.route) },
-                onNavigateToRoleplay = { navController.navigate(Screen.Roleplay.route) }
+                onNavigateToRoleplay = { navController.navigate(Screen.Roleplay.route) },
+                onNavigateToFlashcards = { navController.navigate(Screen.Flashcards.route) }
+            )
+        }
+        composable(Screen.Flashcards.route) {
+            FlashcardScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(Screen.SpeechPractice.route) {
