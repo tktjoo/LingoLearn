@@ -44,8 +44,15 @@ fun NavGraph(
             )
         }
         composable(Screen.AddVocabulary.route) { backStackEntry ->
+            // Try to get parent entry if we navigated from Vocabulary list.
+            // If we navigated directly from Home, parentEntry might not exist,
+            // so we fallback to the current entry.
             val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(Screen.Vocabulary.route)
+                try {
+                    navController.getBackStackEntry(Screen.Vocabulary.route)
+                } catch (e: Exception) {
+                    backStackEntry
+                }
             }
             val viewModel: VocabularyViewModel = hiltViewModel(parentEntry)
 
