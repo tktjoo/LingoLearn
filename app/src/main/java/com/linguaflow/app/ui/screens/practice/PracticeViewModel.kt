@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.linguaflow.app.data.local.db.entity.VocabularyEntity
 import com.linguaflow.app.domain.usecase.streak.GetStreakUseCase
-import com.linguaflow.app.domain.usecase.streak.UpdateStreakUseCase
+import com.linguaflow.app.domain.usecase.streak.AddXpAndCheckStreakUseCase
 import com.linguaflow.app.domain.usecase.vocabulary.GetVocabularyUseCase
 import com.linguaflow.app.domain.usecase.vocabulary.UpdateVocabularyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ class PracticeViewModel @Inject constructor(
     private val getVocabularyUseCase: GetVocabularyUseCase,
     private val updateVocabularyUseCase: UpdateVocabularyUseCase,
     private val getStreakUseCase: GetStreakUseCase,
-    private val updateStreakUseCase: UpdateStreakUseCase
+    private val addXpAndCheckStreakUseCase: AddXpAndCheckStreakUseCase
 ) : ViewModel() {
 
     private val _flashcardUiState = MutableStateFlow<FlashcardUiState>(FlashcardUiState.Loading)
@@ -100,13 +100,6 @@ class PracticeViewModel @Inject constructor(
     }
 
     private suspend fun awardXP(amount: Int) {
-        val currentStreak = getStreakUseCase().firstOrNull() ?: return
-        updateStreakUseCase(
-            currentStreak.copy(
-                dailyXP = currentStreak.dailyXP + amount,
-                totalXP = currentStreak.totalXP + amount,
-                lastPracticeDate = System.currentTimeMillis()
-            )
-        )
+        addXpAndCheckStreakUseCase(amount)
     }
 }
