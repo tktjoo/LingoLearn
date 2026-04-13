@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -42,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.linguaflow.app.ui.components.StreakFireAnimation
 import com.linguaflow.app.ui.theme.PrimaryBlue
 import com.linguaflow.app.ui.theme.SuccessGreen
 import com.linguaflow.app.ui.theme.WarningYellow
@@ -94,12 +94,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "Fire",
-                                tint = WarningYellow,
-                                modifier = Modifier.size(32.dp)
-                            )
+                            StreakFireAnimation(size = 48.dp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "${streak?.currentStreak ?: 0} Days",
