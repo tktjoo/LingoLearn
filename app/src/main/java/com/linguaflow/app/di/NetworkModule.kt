@@ -29,8 +29,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    // Note: Provide real API Key from secure source in production
-                    .addHeader("Authorization", "Bearer YOUR_OPENAI_API_KEY")
+                    .addHeader("Authorization", "Bearer ${com.linguaflow.app.BuildConfig.OPENAI_API_KEY}")
                     .build()
                 chain.proceed(request)
             }

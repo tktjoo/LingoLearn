@@ -22,9 +22,8 @@ class AzureSpeechService @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    // Note: API Keys should ideally be injected securely (e.g., BuildConfig)
-    private val subscriptionKey = "YOUR_AZURE_SUBSCRIPTION_KEY"
-    private val serviceRegion = "YOUR_AZURE_REGION"
+    private val subscriptionKey = com.linguaflow.app.BuildConfig.AZURE_SPEECH_KEY
+    private val serviceRegion = com.linguaflow.app.BuildConfig.AZURE_SPEECH_REGION
 
     suspend fun evaluatePronunciation(
         referenceText: String,

@@ -60,7 +60,7 @@ fun SpeechPracticeScreen(
     LaunchedEffect(uiState) {
         if (uiState is SpeechUiState.Result) {
             onNavigateToResult((uiState as SpeechUiState.Result).evaluation)
-            viewModel.resetState()
+            // State reset is managed by the Result Screen when the user explicitly navigates away
         }
     }
 
