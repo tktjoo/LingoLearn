@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.linguaflow.app.data.local.db.entity.StreakEntity
 import com.linguaflow.app.domain.usecase.streak.GetStreakUseCase
-import com.linguaflow.app.domain.usecase.streak.UpdateStreakUseCase
+import com.linguaflow.app.domain.usecase.streak.AddXpAndCheckStreakUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StreakViewModel @Inject constructor(
     private val getStreakUseCase: GetStreakUseCase,
-    private val updateStreakUseCase: UpdateStreakUseCase
+    private val addXpAndCheckStreakUseCase: AddXpAndCheckStreakUseCase
 ) : ViewModel() {
 
     val streak: StateFlow<StreakEntity?> = getStreakUseCase()
@@ -27,13 +27,7 @@ class StreakViewModel @Inject constructor(
 
     fun testAddXP() {
         viewModelScope.launch {
-            val current = streak.value ?: return@launch
-            updateStreakUseCase(
-                current.copy(
-                    dailyXP = current.dailyXP + 15,
-                    totalXP = current.totalXP + 15
-                )
-            )
+            addXpAndCheckStreakUseCase(15)
         }
     }
 }
