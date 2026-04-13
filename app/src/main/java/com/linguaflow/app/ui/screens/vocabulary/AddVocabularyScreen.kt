@@ -5,13 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,7 +28,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.linguaflow.app.ui.theme.PrimaryBlue
+import com.linguaflow.app.ui.theme.SuccessGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,15 +43,27 @@ fun AddVocabularyScreen(
     var word by remember { mutableStateOf("") }
     var translation by remember { mutableStateOf("") }
     var language by remember { mutableStateOf("en") }
-    var category by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("General") }
+
+    val languages = listOf("en" to "English", "es" to "Spanish", "fr" to "French", "de" to "German", "it" to "Italian")
+    val categories = listOf("General", "Travel", "Food", "Business", "Family", "Health")
+
+    var expandedLanguage by remember { mutableStateOf(false) }
+    var expandedCategory by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Vocabulary") },
+                title = {
+                    Text(
+                        "Add New Word",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -50,15 +73,19 @@ fun AddVocabularyScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             OutlinedTextField(
                 value = word,
                 onValueChange = { word = it },
                 label = { Text("Word") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue
+                )
             )
 
             OutlinedTextField(
@@ -66,24 +93,76 @@ fun AddVocabularyScreen(
                 onValueChange = { translation = it },
                 label = { Text("Translation") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PrimaryBlue
+                )
             )
 
-            OutlinedTextField(
-                value = language,
-                onValueChange = { language = it },
-                label = { Text("Language (e.g. en, fr)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+            ExposedDropdownMenuBox(
+                expanded = expandedLanguage,
+                onExpandedChange = { expandedLanguage = it }
+            ) {
+                OutlinedTextField(
+                    value = languages.find { it.first == language }?.second ?: language,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Language") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryBlue
+                    )
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedLanguage,
+                    onDismissRequest = { expandedLanguage = false }
+                ) {
+                    languages.forEach { (code, name) ->
+                        DropdownMenuItem(
+                            text = { Text(name) },
+                            onClick = {
+                                language = code
+                                expandedLanguage = false
+                            }
+                        )
+                    }
+                }
+            }
 
-            OutlinedTextField(
-                value = category,
-                onValueChange = { category = it },
-                label = { Text("Category (e.g. Travel, Food)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+            ExposedDropdownMenuBox(
+                expanded = expandedCategory,
+                onExpandedChange = { expandedCategory = it }
+            ) {
+                OutlinedTextField(
+                    value = category,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Category") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PrimaryBlue
+                    )
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedCategory,
+                    onDismissRequest = { expandedCategory = false }
+                ) {
+                    categories.forEach { cat ->
+                        DropdownMenuItem(
+                            text = { Text(cat) },
+                            onClick = {
+                                category = cat
+                                expandedCategory = false
+                            }
+                        )
+                    }
+                }
+            }
 
             Button(
                 onClick = {
@@ -92,10 +171,22 @@ fun AddVocabularyScreen(
                         onNavigateBack()
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = word.isNotBlank() && translation.isNotBlank()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                enabled = word.isNotBlank() && translation.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SuccessGreen,
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Text("Save Word")
+                Text(
+                    text = "Save Word",
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
