@@ -21,13 +21,7 @@ class RoleplayViewModel @Inject constructor(
     private val recognizeSpeechUseCase: RecognizeSpeechUseCase
 ) : ViewModel() {
 
-    // A simple context for our AI roleplay scenario
-    private val systemContext = """
-        You are a friendly waiter at a traditional restaurant in Portugal.
-        The user is a customer who is learning Portuguese.
-        You should speak only in Portuguese (PT-PT), keep your sentences relatively short,
-        and be helpful. Start by greeting the customer.
-    """.trimIndent()
+    private var systemContext: String = ""
 
     private val _messages = MutableStateFlow<List<ConversationMessage>>(emptyList())
     val messages: StateFlow<List<ConversationMessage>> = _messages.asStateFlow()
@@ -38,8 +32,12 @@ class RoleplayViewModel @Inject constructor(
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
-    init {
-        // Automatically start the conversation with the AI greeting
+    private var isInitialized = false
+
+    fun initializeScenario(context: String) {
+        if (isInitialized) return
+        systemContext = context
+        isInitialized = true
         sendInitialGreeting()
     }
 

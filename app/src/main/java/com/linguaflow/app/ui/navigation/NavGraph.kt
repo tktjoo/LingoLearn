@@ -7,18 +7,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.linguaflow.app.domain.model.SpeechEvaluation
 import com.linguaflow.app.ui.screens.home.HomeScreen
 import com.linguaflow.app.ui.screens.practice.PracticeMenuScreen
 import com.linguaflow.app.ui.screens.practice.FlashcardScreen
 import com.linguaflow.app.ui.screens.practice.SpeechPracticeScreen
+import com.linguaflow.app.ui.screens.practice.SentenceBuildScreen
 import com.linguaflow.app.ui.screens.profile.ProfileScreen
 import com.linguaflow.app.ui.screens.roleplay.RoleplayScreen
+import com.linguaflow.app.ui.screens.roleplay.RoleplayViewModel
+import com.linguaflow.app.ui.screens.roleplay.ScenarioPickerScreen
 import com.linguaflow.app.ui.screens.speech.SpeechResultScreen
 import com.linguaflow.app.ui.screens.streak.StreakScreen
 import com.linguaflow.app.ui.screens.vocabulary.AddVocabularyScreen
+import com.linguaflow.app.ui.screens.vocabulary.VocabularyDetailScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyListScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyViewModel
 import com.linguaflow.app.ui.screens.speech.SpeechViewModel
@@ -41,7 +47,30 @@ fun NavGraph(
         }
         composable(Screen.Vocabulary.route) {
             VocabularyListScreen(
-                onNavigateToAdd = { navController.navigate(Screen.AddVocabulary.route) }
+                onNavigateToAdd = { navController.navigate(Screen.AddVocabulary.route) },
+                onNavigateToDetail = { wordId -> navController.navigate(Screen.VocabularyDetail.createRoute(wordId)) }
+            )
+        }
+        composable(
+            route = Screen.VocabularyDetail.route,
+            arguments = listOf(navArgument("wordId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val wordId = backStackEntry.arguments?.getLong("wordId") ?: return@composable
+
+            // Use parent entry to share ViewModel
+            val parentEntry = remember(backStackEntry) {
+                try {
+                    navController.getBackStackEntry(Screen.Vocabulary.route)
+                } catch (e: Exception) {
+                    backStackEntry
+                }
+            }
+            val viewModel: VocabularyViewModel = hiltViewModel(parentEntry)
+
+            VocabularyDetailScreen(
+                wordId = wordId,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
         composable(Screen.AddVocabulary.route) { backStackEntry ->
@@ -67,8 +96,24 @@ fun NavGraph(
         composable(Screen.Practice.route) {
             PracticeMenuScreen(
                 onNavigateToSpeechPractice = { navController.navigate(Screen.SpeechPractice.route) },
-                onNavigateToRoleplay = { navController.navigate(Screen.Roleplay.route) },
-                onNavigateToFlashcards = { navController.navigate(Screen.Flashcards.route) }
+                onNavigateToRoleplay = { navController.navigate(Screen.ScenarioPicker.route) },
+                onNavigateToFlashcards = { navController.navigate(Screen.Flashcards.route) },
+                onNavigateToSentenceBuilder = { navController.navigate(Screen.SentenceBuilder.route) }
+            )
+        }
+        composable(Screen.SentenceBuilder.route) {
+            SentenceBuildScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.ScenarioPicker.route) {
+            ScenarioPickerScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onScenarioSelected = { title, context ->
+                    val encodedTitle = java.net.URLEncoder.encode(title, "UTF-8")
+                    val encodedContext = java.net.URLEncoder.encode(context, "UTF-8")
+                    navController.navigate(Screen.Roleplay.createRoute(encodedTitle, encodedContext))
+                }
             )
         }
         composable(Screen.Flashcards.route) {
@@ -108,9 +153,28 @@ fun NavGraph(
                 }
             }
         }
-        composable(Screen.Roleplay.route) {
+        composable(
+            route = Screen.Roleplay.route,
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType },
+                navArgument("context") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("title") ?: "Roleplay", "UTF-8")
+            val context = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("context") ?: "", "UTF-8")
+
+            // We pass the context to the ViewModel programmatically here or via SavedStateHandle.
+            // For simplicity, we just pass the title as parameter to Screen and let VM read StateHandle.
+            // Since we need to update VM, we pass it via a setter method.
+            val viewModel: RoleplayViewModel = hiltViewModel()
+            androidx.compose.runtime.LaunchedEffect(context) {
+                viewModel.initializeScenario(context)
+            }
+
             RoleplayScreen(
-                onNavigateBack = { navController.popBackStack() }
+                title = title,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
         composable(Screen.Streak.route) {

@@ -54,6 +54,7 @@ import com.linguaflow.app.ui.theme.PrimaryBlue
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun RoleplayScreen(
+    title: String = "Roleplay",
     onNavigateBack: () -> Unit,
     viewModel: RoleplayViewModel = hiltViewModel()
 ) {
@@ -75,7 +76,7 @@ fun RoleplayScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Roleplay: Restaurant") },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")

@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 fun PracticeMenuScreen(
     onNavigateToSpeechPractice: () -> Unit = {},
     onNavigateToRoleplay: () -> Unit = {},
-    onNavigateToFlashcards: () -> Unit = {}
+    onNavigateToFlashcards: () -> Unit = {},
+    onNavigateToSentenceBuilder: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -74,6 +75,20 @@ fun PracticeMenuScreen(
             ) {
                 Text(
                     text = "Vocabulary Flashcards",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onNavigateToSentenceBuilder,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = "Sentence Builder Game",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
