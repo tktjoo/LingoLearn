@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,11 +37,24 @@ class PracticeViewModel @Inject constructor(
     private val _flashcardUiState = MutableStateFlow<FlashcardUiState>(FlashcardUiState.Loading)
     val flashcardUiState: StateFlow<FlashcardUiState> = _flashcardUiState
 
+    val currentLanguage: StateFlow<String> = userPreferences.targetLanguageFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "en"
+        )
+
     private var wordsList: List<VocabularyEntity> = emptyList()
     private var currentIndex = 0
 
     init {
         loadWords()
+    }
+
+    fun addXpForSentencePractice() {
+        viewModelScope.launch {
+            awardXP(15) // +15 XP for completing sentence exercise
+        }
     }
 
     private fun loadWords() {

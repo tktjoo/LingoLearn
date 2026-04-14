@@ -36,30 +36,54 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.linguaflow.app.ui.theme.ErrorRed
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.linguaflow.app.domain.model.SentenceExercise
+import com.linguaflow.app.domain.model.globalSentenceExercises
 import com.linguaflow.app.ui.theme.PrimaryBlue
 import com.linguaflow.app.ui.theme.SuccessGreen
-
-data class SentenceExercise(
-    val targetSentence: String,
-    val translation: String,
-    val words: List<String>
-)
-
-val sampleExercises = listOf(
-    SentenceExercise("Eu gosto de comer maçãs", "I like to eat apples", listOf("Eu", "gosto", "maçãs", "comer", "de")),
-    SentenceExercise("Onde fica a casa de banho?", "Where is the bathroom?", listOf("fica", "Onde", "a", "casa", "banho?", "de"))
-)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SentenceBuildScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: PracticeViewModel = hiltViewModel()
 ) {
-    var currentExerciseIndex by remember { mutableStateOf(0) }
-    val exercise = sampleExercises[currentExerciseIndex]
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
 
-    var selectedWords by remember(currentExerciseIndex) { mutableStateOf(listOf<String>()) }
-    var availableWords by remember(currentExerciseIndex) { mutableStateOf(exercise.words.shuffled()) }
+    // Filter exercises based on current selected learning language
+    val languageExercises = remember(currentLanguage) {
+        globalSentenceExercises.filter { it.languageCode == currentLanguage }
+    }
+
+    if (languageExercises.isEmpty()) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Build the Sentence") },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                )
+            }
+        ) { padding ->
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Ainda não existem exercícios para esta língua.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        return
+    }
+
+    var currentExerciseIndex by remember(currentLanguage) { mutableStateOf(0) }
+    val exercise = languageExercises[currentExerciseIndex]
+
+    var selectedWords by remember(exercise) { mutableStateOf(listOf<String>()) }
+    var availableWords by remember(exercise) { mutableStateOf(exercise.words.shuffled()) }
 
     var showResult by remember(currentExerciseIndex) { mutableStateOf(false) }
     var isCorrect by remember(currentExerciseIndex) { mutableStateOf(false) }
@@ -163,7 +187,7 @@ fun SentenceBuildScreen(
             Button(
                 onClick = {
                     if (showResult) {
-                        if (currentExerciseIndex < sampleExercises.size - 1) {
+                        if (currentExerciseIndex < languageExercises.size - 1) {
                             currentExerciseIndex++
                         } else {
                             onNavigateBack() // Completed all exercises
@@ -172,7 +196,9 @@ fun SentenceBuildScreen(
                         val currentSentence = selectedWords.joinToString(" ")
                         isCorrect = currentSentence.trim() == exercise.targetSentence.trim()
                         showResult = true
-                        // Here we could update Streak/XP in a real scenario
+                        if (isCorrect) {
+                            viewModel.addXpForSentencePractice()
+                        }
                     }
                 },
                 modifier = Modifier
