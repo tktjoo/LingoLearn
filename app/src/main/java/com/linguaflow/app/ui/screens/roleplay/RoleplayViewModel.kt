@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.linguaflow.app.domain.model.ConversationMessage
 import com.linguaflow.app.domain.model.SenderType
 import com.linguaflow.app.domain.usecase.conversation.ChatWithAIUseCase
+import com.linguaflow.app.domain.usecase.speech.RecognizeSpeechUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RoleplayViewModel @Inject constructor(
-    private val chatWithAIUseCase: ChatWithAIUseCase
+    private val chatWithAIUseCase: ChatWithAIUseCase,
+    private val recognizeSpeechUseCase: RecognizeSpeechUseCase
 ) : ViewModel() {
 
     // A simple context for our AI roleplay scenario
@@ -33,6 +35,9 @@ class RoleplayViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
+
     init {
         // Automatically start the conversation with the AI greeting
         sendInitialGreeting()
@@ -44,6 +49,20 @@ class RoleplayViewModel @Inject constructor(
             val response = chatWithAIUseCase(systemContext, "Olá! Pode começar a conversa como se eu acabasse de entrar no restaurante.")
             addMessage(response, SenderType.AI)
             _isLoading.value = false
+        }
+    }
+
+    fun startRecording() {
+        if (_isRecording.value) return
+
+        viewModelScope.launch {
+            _isRecording.value = true
+            val recognizedText = recognizeSpeechUseCase(language = "pt-PT")
+            _isRecording.value = false
+
+            if (!recognizedText.isNullOrBlank()) {
+                sendMessage(recognizedText)
+            }
         }
     }
 

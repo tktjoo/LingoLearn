@@ -40,14 +40,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.linguaflow.app.domain.model.ConversationMessage
 import com.linguaflow.app.domain.model.SenderType
 import com.linguaflow.app.ui.theme.PrimaryBlue
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun RoleplayScreen(
     onNavigateBack: () -> Unit,
@@ -55,6 +59,9 @@ fun RoleplayScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isRecording by viewModel.isRecording.collectAsState()
+
+    val recordAudioPermission = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
     val listState = rememberLazyListState()
 
@@ -79,7 +86,15 @@ fun RoleplayScreen(
         bottomBar = {
             ChatInputRow(
                 isLoading = isLoading,
-                onSendMessage = { text -> viewModel.sendMessage(text) }
+                isRecording = isRecording,
+                onSendMessage = { text -> viewModel.sendMessage(text) },
+                onStartRecording = {
+                    if (recordAudioPermission.status.isGranted) {
+                        viewModel.startRecording()
+                    } else {
+                        recordAudioPermission.launchPermissionRequest()
+                    }
+                }
             )
         }
     ) { padding ->
@@ -152,7 +167,9 @@ fun ChatBubble(message: ConversationMessage) {
 @Composable
 fun ChatInputRow(
     isLoading: Boolean,
-    onSendMessage: (String) -> Unit
+    isRecording: Boolean,
+    onSendMessage: (String) -> Unit,
+    onStartRecording: () -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
 
@@ -166,7 +183,7 @@ fun ChatInputRow(
         TextField(
             value = inputText,
             onValueChange = { inputText = it },
-            placeholder = { Text("Escreva ou fale a sua resposta...") },
+            placeholder = { Text(if (isRecording) "A ouvir..." else "Escreva ou fale a sua resposta...") },
             modifier = Modifier.weight(1f),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -185,7 +202,23 @@ fun ChatInputRow(
                 }
             ),
             singleLine = false,
-            maxLines = 3
+            maxLines = 3,
+            enabled = !isRecording,
+            trailingIcon = {
+                if (inputText.isBlank()) {
+                    IconButton(
+                        onClick = onStartRecording,
+                        enabled = !isLoading && !isRecording
+                    ) {
+                        // Use a text placeholder since we don't have mic icon in the defaults yet
+                        // Normally would be Icons.Default.Mic
+                        Text(
+                            "🎤",
+                            color = if (isRecording) Color.Red else PrimaryBlue
+                        )
+                    }
+                }
+            }
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -197,7 +230,7 @@ fun ChatInputRow(
                     inputText = ""
                 }
             },
-            enabled = inputText.isNotBlank() && !isLoading
+            enabled = inputText.isNotBlank() && !isLoading && !isRecording
         ) {
             Icon(
                 imageVector = Icons.Default.Send,

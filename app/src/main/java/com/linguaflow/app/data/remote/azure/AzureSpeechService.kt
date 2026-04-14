@@ -25,6 +25,29 @@ class AzureSpeechService @Inject constructor(
     private val subscriptionKey = com.linguaflow.app.BuildConfig.AZURE_SPEECH_KEY
     private val serviceRegion = com.linguaflow.app.BuildConfig.AZURE_SPEECH_REGION
 
+    suspend fun recognizeSpeech(language: String = "en-US"): String? = withContext(Dispatchers.IO) {
+        var speechConfig: SpeechConfig? = null
+        var audioConfig: AudioConfig? = null
+        var recognizer: SpeechRecognizer? = null
+        try {
+            speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion)
+            speechConfig.speechRecognitionLanguage = language
+
+            audioConfig = AudioConfig.fromDefaultMicrophoneInput()
+            recognizer = SpeechRecognizer(speechConfig, audioConfig)
+
+            val result = recognizer.recognizeOnceAsync().get()
+            return@withContext result.text
+        } catch (e: Exception) {
+            Log.e("AzureSpeechService", "Error recognizing speech", e)
+            null
+        } finally {
+            recognizer?.close()
+            audioConfig?.close()
+            speechConfig?.close()
+        }
+    }
+
     suspend fun evaluatePronunciation(
         referenceText: String,
         language: String = "en-US"
