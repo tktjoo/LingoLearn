@@ -69,13 +69,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     val dailyGoal by viewModel.dailyGoal.collectAsState()
     val targetLanguage by viewModel.targetLanguage.collectAsState()
 
-    val availableLanguages = listOf(
-        "en" to "English",
-        "es" to "Spanish",
-        "fr" to "French",
-        "de" to "German",
-        "it" to "Italian"
-    )
+    val availableLanguages = com.linguaflow.app.domain.model.SupportedLanguages
 
     var expandedLanguage by remember { mutableStateOf(false) }
 
@@ -125,9 +119,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                val displayLanguage = availableLanguages.find { it.first == targetLanguage }?.second ?: "English"
+                val displayLanguage = availableLanguages.find { it.first == targetLanguage }?.second ?: "Inglês"
                 Text(
-                    text = "Learning $displayLanguage",
+                    text = "A aprender $displayLanguage",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

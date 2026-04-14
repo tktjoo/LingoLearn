@@ -51,7 +51,7 @@ fun AddVocabularyScreen(
 
     var language by remember(targetLanguage) { mutableStateOf(targetLanguage) }
 
-    val languages = listOf("en" to "English", "es" to "Spanish", "fr" to "French", "de" to "German", "it" to "Italian")
+    val languages = com.linguaflow.app.domain.model.SupportedLanguages
     val categories = listOf("General", "Travel", "Food", "Business", "Family", "Health")
 
     var expandedLanguage by remember { mutableStateOf(false) }
