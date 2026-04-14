@@ -63,7 +63,7 @@ fun FlashcardScreen(
                 title = { Text("Flashcards", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -79,11 +79,11 @@ fun FlashcardScreen(
         ) {
             when (val state = uiState) {
                 is FlashcardUiState.Loading -> {
-                    Text("Loading flashcards...")
+                    Text("A carregar flashcards...")
                 }
                 is FlashcardUiState.Empty -> {
                     Text(
-                        text = "You don't have any vocabulary words to practice yet. Add some words first!",
+                        text = "Ainda não tens palavras de vocabulário para praticar neste idioma. Adiciona algumas palavras primeiro!",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center
                     )
@@ -91,14 +91,14 @@ fun FlashcardScreen(
                 is FlashcardUiState.Finished -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Practice Complete!",
+                            text = "Prática Concluída!",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = SuccessGreen
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "You've reviewed all your words.",
+                            text = "Reviste todas as tuas palavras.",
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(32.dp))
@@ -106,7 +106,7 @@ fun FlashcardScreen(
                             onClick = onNavigateBack,
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
                         ) {
-                            Text("Return to Menu")
+                            Text("Voltar ao Menu")
                         }
                     }
                 }
@@ -143,7 +143,7 @@ fun FlashcardView(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Word ${currentIndex + 1} of $totalCount",
+            text = "Palavra ${currentIndex + 1} de $totalCount",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -175,7 +175,7 @@ fun FlashcardView(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Tap to flip",
+                            text = "Toca para virar",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -195,7 +195,7 @@ fun FlashcardView(
                         if (!vocabulary.category.isNullOrBlank()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Category: ${vocabulary.category}",
+                                text = "Categoria: ${vocabulary.category}",
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -219,9 +219,9 @@ fun FlashcardView(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.weight(1f).height(56.dp)
                 ) {
-                    Icon(Icons.Default.Close, contentDescription = "Didn't remember")
+                    Icon(Icons.Default.Close, contentDescription = "Não sabia")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Don't Know")
+                    Text("Não Sabia")
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
@@ -230,9 +230,9 @@ fun FlashcardView(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.weight(1f).height(56.dp)
                 ) {
-                    Icon(Icons.Default.Check, contentDescription = "Remembered")
+                    Icon(Icons.Default.Check, contentDescription = "Sabia")
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Know It")
+                    Text("Sabia")
                 }
             }
         } else {

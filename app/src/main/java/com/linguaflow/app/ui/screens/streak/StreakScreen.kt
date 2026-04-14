@@ -54,7 +54,7 @@ fun StreakScreen(viewModel: StreakViewModel = hiltViewModel()) {
             TopAppBar(
                 title = {
                     Text(
-                        "My Progress",
+                        "O Meu Progresso",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -81,13 +81,13 @@ fun StreakScreen(viewModel: StreakViewModel = hiltViewModel()) {
                 StreakFireAnimation(size = 200.dp)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "${streak?.currentStreak ?: 0} Days",
+                    text = "${streak?.currentStreak ?: 0} Dias",
                     style = MaterialTheme.typography.displayLarge,
                     fontWeight = FontWeight.Bold,
                     color = WarningYellow
                 )
                 Text(
-                    text = "Current Streak",
+                    text = "Sequência Atual",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -103,14 +103,14 @@ fun StreakScreen(viewModel: StreakViewModel = hiltViewModel()) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StatCard(
-                        title = "Longest Streak",
-                        value = "${streak?.longestStreak ?: 0} Days",
+                        title = "Maior Sequência",
+                        value = "${streak?.longestStreak ?: 0} Dias",
                         icon = Icons.Default.Star,
                         color = PrimaryBlue,
                         modifier = Modifier.weight(1f)
                     )
                     StatCard(
-                        title = "Total Days",
+                        title = "Total de Dias",
                         value = "${streak?.totalDaysPracticed ?: 0}",
                         icon = Icons.Default.DateRange,
                         color = SuccessGreen,
@@ -172,7 +172,7 @@ fun StreakScreen(viewModel: StreakViewModel = hiltViewModel()) {
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
             ) {
                 Text(
-                    text = "Practice & Earn XP",
+                    text = "Praticar e Ganhar XP",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

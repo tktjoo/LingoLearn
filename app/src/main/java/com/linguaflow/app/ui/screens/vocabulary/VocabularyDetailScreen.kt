@@ -53,10 +53,10 @@ fun VocabularyDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Word Details") },
+                title = { Text("Detalhes da Palavra") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -64,7 +64,7 @@ fun VocabularyDetailScreen(
     ) { padding ->
         if (word == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Word not found.")
+                Text("Palavra não encontrada.")
             }
             return@Scaffold
         }
@@ -108,7 +108,7 @@ fun VocabularyDetailScreen(
                 )
             }
             Text(
-                text = "Listen",
+                text = "Ouvir",
                 style = MaterialTheme.typography.labelMedium,
                 color = PrimaryBlue,
                 modifier = Modifier.padding(top = 8.dp)
@@ -127,15 +127,15 @@ fun VocabularyDetailScreen(
                         Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Details",
+                            text = "Detalhes",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Language: ${word.language.uppercase()}", style = MaterialTheme.typography.bodyLarge)
+                    Text("Idioma: ${word.language.uppercase()}", style = MaterialTheme.typography.bodyLarge)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Category: ${word.category ?: "None"}", style = MaterialTheme.typography.bodyLarge)
+                    Text("Categoria: ${word.category ?: "Nenhuma"}", style = MaterialTheme.typography.bodyLarge)
                 }
             }
 
@@ -152,7 +152,7 @@ fun VocabularyDetailScreen(
                         Icon(Icons.Default.Star, contentDescription = null, tint = SuccessGreen)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Mastery",
+                            text = "Domínio",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = SuccessGreen
@@ -160,13 +160,13 @@ fun VocabularyDetailScreen(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Times Reviewed: ${word.timesReviewed}",
+                        text = "Vezes Revisto: ${word.timesReviewed}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Times Correct: ${word.timesCorrect}",
+                        text = "Vezes Correto: ${word.timesCorrect}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )

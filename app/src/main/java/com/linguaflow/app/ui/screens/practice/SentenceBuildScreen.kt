@@ -60,10 +60,10 @@ fun SentenceBuildScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Build the Sentence") },
+                    title = { Text("Construir a Frase") },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                         }
                     }
                 )
@@ -91,10 +91,10 @@ fun SentenceBuildScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Build the Sentence") },
+                title = { Text("Construir a Frase") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -108,7 +108,7 @@ fun SentenceBuildScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Translate this sentence:",
+                text = "Traduz esta frase:",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -169,7 +169,7 @@ fun SentenceBuildScreen(
 
             if (showResult) {
                 val color = if (isCorrect) SuccessGreen else ErrorRed
-                val msg = if (isCorrect) "Correct!" else "Incorrect. The answer is: ${exercise.targetSentence}"
+                val msg = if (isCorrect) "Correto!" else "Incorreto. A resposta é: ${exercise.targetSentence}"
 
                 Box(
                     modifier = Modifier
@@ -209,7 +209,7 @@ fun SentenceBuildScreen(
                     containerColor = if (showResult && !isCorrect) ErrorRed else PrimaryBlue
                 )
             ) {
-                Text(if (showResult) "Continue" else "Check Answer", style = MaterialTheme.typography.titleMedium)
+                Text(if (showResult) "Continuar" else "Verificar Resposta", style = MaterialTheme.typography.titleMedium)
             }
         }
     }

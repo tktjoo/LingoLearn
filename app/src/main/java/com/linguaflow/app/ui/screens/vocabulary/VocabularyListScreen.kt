@@ -62,7 +62,7 @@ fun VocabularyListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "My Vocabulary",
+                        "O Meu Vocabulário",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -76,7 +76,7 @@ fun VocabularyListScreen(
                 contentColor = Color.White,
                 shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Vocabulary")
+                Icon(Icons.Default.Add, contentDescription = "Adicionar Vocabulário")
             }
         }
     ) { padding ->
@@ -93,8 +93,8 @@ fun VocabularyListScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text("Search words...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                placeholder = { Text("Procurar palavras...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Procurar") },
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.Transparent,
@@ -118,7 +118,7 @@ fun VocabularyListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (searchQuery.isEmpty()) "No words added yet." else "No words found.",
+                        text = if (searchQuery.isEmpty()) "Nenhuma palavra adicionada." else "Nenhuma palavra encontrada.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )

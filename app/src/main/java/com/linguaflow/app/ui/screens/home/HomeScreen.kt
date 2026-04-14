@@ -88,7 +88,7 @@ fun HomeScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Daily Streak",
+                                text = "Sequência Diária",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -97,7 +97,7 @@ fun HomeScreen(
                             StreakFireAnimation(size = 48.dp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "${streak?.currentStreak ?: 0} Days",
+                                    text = "${streak?.currentStreak ?: 0} Dias",
                                 style = MaterialTheme.typography.displayLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = WarningYellow
@@ -112,7 +112,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Daily Goal",
+                    text = "Meta Diária",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -146,7 +146,7 @@ fun HomeScreen(
 
             // Quick Actions
             Text(
-                text = "Quick Actions",
+                text = "Ações Rápidas",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 8.dp)
@@ -157,14 +157,14 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 QuickActionButton(
-                    title = "Practice",
+                    title = "Praticar",
                     icon = Icons.Default.PlayArrow,
                     color = PrimaryBlue,
                     onClick = onNavigateToPractice,
                     modifier = Modifier.weight(1f)
                 )
                 QuickActionButton(
-                    title = "Add Word",
+                    title = "Nova Palavra",
                     icon = Icons.Default.AddCircle,
                     color = SuccessGreen,
                     onClick = onNavigateToAddVocabulary,

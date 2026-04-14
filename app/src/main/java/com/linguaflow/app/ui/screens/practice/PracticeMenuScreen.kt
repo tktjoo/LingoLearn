@@ -28,7 +28,7 @@ fun PracticeMenuScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Practice Menu") })
+            TopAppBar(title = { Text("Menu de Prática") })
         }
     ) { padding ->
         Column(
@@ -46,7 +46,7 @@ fun PracticeMenuScreen(
                     .height(56.dp)
             ) {
                 Text(
-                    text = "Speech Practice",
+                    text = "Prática de Pronúncia",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -60,7 +60,7 @@ fun PracticeMenuScreen(
                     .height(56.dp)
             ) {
                 Text(
-                    text = "AI Roleplay Conversation",
+                    text = "Roleplay com IA",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -74,7 +74,7 @@ fun PracticeMenuScreen(
                     .height(56.dp)
             ) {
                 Text(
-                    text = "Vocabulary Flashcards",
+                    text = "Flashcards de Vocabulário",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -88,7 +88,7 @@ fun PracticeMenuScreen(
                     .height(56.dp)
             ) {
                 Text(
-                    text = "Sentence Builder Game",
+                    text = "Jogo de Construção de Frases",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
