@@ -193,8 +193,21 @@ fun SentenceBuildScreen(
                             onNavigateBack() // Completed all exercises
                         }
                     } else {
-                        val currentSentence = selectedWords.joinToString(" ")
-                        isCorrect = currentSentence.trim() == exercise.targetSentence.trim()
+                        // Certain languages don't use spaces between words, so we must join accordingly or strip spaces to compare accurately.
+                        val languagesWithoutSpaces = listOf("ja", "zh", "th")
+                        val currentSentence = if (currentLanguage in languagesWithoutSpaces) {
+                            selectedWords.joinToString("")
+                        } else {
+                            selectedWords.joinToString(" ")
+                        }
+
+                        val formattedTarget = if (currentLanguage in languagesWithoutSpaces) {
+                            exercise.targetSentence.replace(" ", "").trim()
+                        } else {
+                            exercise.targetSentence.trim()
+                        }
+
+                        isCorrect = currentSentence.trim() == formattedTarget
                         showResult = true
                         if (isCorrect) {
                             viewModel.addXpForSentencePractice()
