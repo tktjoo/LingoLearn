@@ -1,6 +1,7 @@
 package com.linguaflow.app.ui.screens.practice
 
 import androidx.lifecycle.ViewModel
+import com.linguaflow.app.data.local.datastore.UserPreferences
 import androidx.lifecycle.viewModelScope
 import com.linguaflow.app.data.local.db.entity.VocabularyEntity
 import com.linguaflow.app.domain.usecase.streak.GetStreakUseCase
@@ -27,7 +28,8 @@ class PracticeViewModel @Inject constructor(
     private val getVocabularyUseCase: GetVocabularyUseCase,
     private val updateVocabularyUseCase: UpdateVocabularyUseCase,
     private val getStreakUseCase: GetStreakUseCase,
-    private val addXpAndCheckStreakUseCase: AddXpAndCheckStreakUseCase
+    private val addXpAndCheckStreakUseCase: AddXpAndCheckStreakUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _flashcardUiState = MutableStateFlow<FlashcardUiState>(FlashcardUiState.Loading)
@@ -42,7 +44,9 @@ class PracticeViewModel @Inject constructor(
 
     private fun loadWords() {
         viewModelScope.launch {
-            val words = getVocabularyUseCase().first()
+            val currentLanguage = userPreferences.targetLanguageFlow.first()
+            val words = getVocabularyUseCase().first().filter { it.language == currentLanguage }
+
             if (words.isEmpty()) {
                 _flashcardUiState.value = FlashcardUiState.Empty
             } else {

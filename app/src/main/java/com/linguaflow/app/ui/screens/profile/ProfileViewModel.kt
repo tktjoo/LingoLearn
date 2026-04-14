@@ -57,6 +57,13 @@ class ProfileViewModel @Inject constructor(
             initialValue = 50
         )
 
+    val targetLanguage: StateFlow<String> = userPreferences.targetLanguageFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "en"
+        )
+
     fun setDarkTheme(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setDarkTheme(enabled)
@@ -72,6 +79,12 @@ class ProfileViewModel @Inject constructor(
     fun setDailyGoal(goal: Int) {
         viewModelScope.launch {
             userPreferences.setDailyGoal(goal)
+        }
+    }
+
+    fun setTargetLanguage(languageCode: String) {
+        viewModelScope.launch {
+            userPreferences.setTargetLanguage(languageCode)
         }
     }
 }

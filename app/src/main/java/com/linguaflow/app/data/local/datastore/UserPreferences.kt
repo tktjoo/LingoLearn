@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +34,10 @@ class UserPreferences @Inject constructor(
         preferences[PreferencesKeys.DAILY_GOAL_XP] ?: 50
     }
 
+    val targetLanguageFlow: Flow<String> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.TARGET_LANGUAGE] ?: "en" // Default to English
+    }
+
     suspend fun setDarkTheme(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME] = enabled
@@ -51,9 +56,16 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    suspend fun setTargetLanguage(languageCode: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.TARGET_LANGUAGE] = languageCode
+        }
+    }
+
     private object PreferencesKeys {
         val DARK_THEME = booleanPreferencesKey("dark_theme")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val DAILY_GOAL_XP = intPreferencesKey("daily_goal_xp")
+        val TARGET_LANGUAGE = stringPreferencesKey("target_language")
     }
 }

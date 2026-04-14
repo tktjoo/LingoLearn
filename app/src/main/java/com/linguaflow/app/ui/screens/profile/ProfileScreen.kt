@@ -36,6 +36,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,6 +67,17 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val dailyGoal by viewModel.dailyGoal.collectAsState()
+    val targetLanguage by viewModel.targetLanguage.collectAsState()
+
+    val availableLanguages = listOf(
+        "en" to "English",
+        "es" to "Spanish",
+        "fr" to "French",
+        "de" to "German",
+        "it" to "Italian"
+    )
+
+    var expandedLanguage by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -109,8 +125,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val displayLanguage = availableLanguages.find { it.first == targetLanguage }?.second ?: "English"
                 Text(
-                    text = "Learning English (Intermediate)",
+                    text = "Learning $displayLanguage",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -196,6 +213,41 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                                 viewModel.setDailyGoal(newGoal)
                             }
                         )
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
+
+                        // Language Selector
+                        ExposedDropdownMenuBox(
+                            expanded = expandedLanguage,
+                            onExpandedChange = { expandedLanguage = it },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = availableLanguages.find { it.first == targetLanguage }?.second ?: targetLanguage,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("Target Language") },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage) },
+                                modifier = Modifier.fillMaxWidth().menuAnchor(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = PrimaryBlue
+                                )
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expandedLanguage,
+                                onDismissRequest = { expandedLanguage = false }
+                            ) {
+                                availableLanguages.forEach { (code, name) ->
+                                    DropdownMenuItem(
+                                        text = { Text(name) },
+                                        onClick = {
+                                            viewModel.setTargetLanguage(code)
+                                            expandedLanguage = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

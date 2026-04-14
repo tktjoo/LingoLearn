@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +43,13 @@ fun AddVocabularyScreen(
 ) {
     var word by remember { mutableStateOf("") }
     var translation by remember { mutableStateOf("") }
-    var language by remember { mutableStateOf("en") }
     var category by remember { mutableStateOf("General") }
+
+    // Use a viewmodel to grab the actual target language
+    val viewModel: VocabularyViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    val targetLanguage by viewModel.targetLanguage.collectAsState()
+
+    var language by remember(targetLanguage) { mutableStateOf(targetLanguage) }
 
     val languages = listOf("en" to "English", "es" to "Spanish", "fr" to "French", "de" to "German", "it" to "Italian")
     val categories = listOf("General", "Travel", "Food", "Business", "Family", "Health")

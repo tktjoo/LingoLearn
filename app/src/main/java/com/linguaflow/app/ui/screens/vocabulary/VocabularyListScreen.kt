@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -50,6 +51,7 @@ import com.linguaflow.app.ui.theme.PrimaryBlue
 @Composable
 fun VocabularyListScreen(
     onNavigateToAdd: () -> Unit,
+    onNavigateToDetail: (Long) -> Unit = {},
     viewModel: VocabularyViewModel = hiltViewModel()
 ) {
     val vocabularyList by viewModel.vocabularyList.collectAsState()
@@ -129,7 +131,9 @@ fun VocabularyListScreen(
                 ) {
                     items(filteredList, key = { it.id }) { vocab ->
                         Card(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onNavigateToDetail(vocab.id) },
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surface
                             ),
