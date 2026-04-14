@@ -43,7 +43,7 @@ fun AddVocabularyScreen(
 ) {
     var word by remember { mutableStateOf("") }
     var translation by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("General") }
+    var category by remember { mutableStateOf("Geral") }
 
     // Use a viewmodel to grab the actual target language
     val viewModel: VocabularyViewModel = androidx.hilt.navigation.compose.hiltViewModel()
@@ -52,7 +52,7 @@ fun AddVocabularyScreen(
     var language by remember(targetLanguage) { mutableStateOf(targetLanguage) }
 
     val languages = com.linguaflow.app.domain.model.SupportedLanguages
-    val categories = listOf("General", "Travel", "Food", "Business", "Family", "Health")
+    val categories = listOf("Geral", "Viagem", "Comida", "Negócios", "Família", "Saúde")
 
     var expandedLanguage by remember { mutableStateOf(false) }
     var expandedCategory by remember { mutableStateOf(false) }
@@ -62,14 +62,14 @@ fun AddVocabularyScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Add New Word",
+                        "Adicionar Palavra",
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -85,7 +85,7 @@ fun AddVocabularyScreen(
             OutlinedTextField(
                 value = word,
                 onValueChange = { word = it },
-                label = { Text("Word") },
+                label = { Text("Palavra") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -97,7 +97,7 @@ fun AddVocabularyScreen(
             OutlinedTextField(
                 value = translation,
                 onValueChange = { translation = it },
-                label = { Text("Translation") },
+                label = { Text("Tradução") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -114,7 +114,7 @@ fun AddVocabularyScreen(
                     value = languages.find { it.first == language }?.second ?: language,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Language") },
+                    label = { Text("Idioma") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage) },
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
                     shape = RoundedCornerShape(12.dp),
@@ -146,7 +146,7 @@ fun AddVocabularyScreen(
                     value = category,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Category") },
+                    label = { Text("Categoria") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
                     shape = RoundedCornerShape(12.dp),
@@ -188,7 +188,7 @@ fun AddVocabularyScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
-                    text = "Save Word",
+                    text = "Guardar Palavra",
                     modifier = Modifier.padding(vertical = 8.dp),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold

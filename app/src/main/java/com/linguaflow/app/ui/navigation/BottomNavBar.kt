@@ -25,11 +25,11 @@ data class BottomNavItem(
 @Composable
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
-        BottomNavItem("Home", Icons.Default.Home, Screen.Home.route),
-        BottomNavItem("Vocab", Icons.Default.List, Screen.Vocabulary.route),
-        BottomNavItem("Practice", Icons.Default.PlayArrow, Screen.Practice.route),
-        BottomNavItem("Streak", Icons.Default.DateRange, Screen.Streak.route),
-        BottomNavItem("Profile", Icons.Default.Person, Screen.Profile.route)
+        BottomNavItem("Início", Icons.Default.Home, Screen.Home.route),
+        BottomNavItem("Vocabulário", Icons.Default.List, Screen.Vocabulary.route),
+        BottomNavItem("Praticar", Icons.Default.PlayArrow, Screen.Practice.route),
+        BottomNavItem("Estatísticas", Icons.Default.DateRange, Screen.Streak.route),
+        BottomNavItem("Perfil", Icons.Default.Person, Screen.Profile.route)
     )
 
     NavigationBar {

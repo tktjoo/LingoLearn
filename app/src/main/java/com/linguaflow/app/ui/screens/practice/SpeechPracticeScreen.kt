@@ -67,10 +67,10 @@ fun SpeechPracticeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Speech Practice") },
+                title = { Text("Prática de Pronúncia") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -85,7 +85,7 @@ fun SpeechPracticeScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Please read the following text aloud:",
+                text = "Por favor lê o seguinte texto em voz alta:",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -124,14 +124,14 @@ fun SpeechPracticeScreen(
                 is SpeechUiState.Recording, is SpeechUiState.Evaluating -> {
                     if (uiState is SpeechUiState.Evaluating) {
                         CircularProgressIndicator(modifier = Modifier.padding(bottom = 16.dp))
-                        Text("Evaluating your pronunciation...")
+                        Text("A avaliar a tua pronúncia...")
                     } else {
                         RecordButton(
                             isRecording = true,
                             onClick = { /* SDK is blocking in this example, ignore clicks */ }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("Recording...", color = ErrorRed)
+                        Text("A gravar...", color = ErrorRed)
                     }
                 }
                 is SpeechUiState.Result -> {

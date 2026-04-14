@@ -78,7 +78,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             TopAppBar(
                 title = {
                     Text(
-                        "Profile",
+                        "Perfil",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -130,7 +130,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             // Global Statistics
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Statistics",
+                    text = "Estatísticas Globais",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -147,14 +147,14 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                         modifier = Modifier.weight(1f)
                     )
                     StatBox(
-                        title = "Total Days",
+                        title = "Total Dias",
                         value = "${streak?.totalDaysPracticed ?: 0}",
                         icon = Icons.Default.DateRange,
                         color = PrimaryBlue,
                         modifier = Modifier.weight(1f)
                     )
                     StatBox(
-                        title = "Words",
+                        title = "Palavras",
                         value = "$totalWords",
                         icon = Icons.Default.List,
                         color = SuccessGreen,
@@ -166,7 +166,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
             // Settings Section
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "Settings",
+                    text = "Definições",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -182,8 +182,8 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                         SettingToggleRow(
                             icon = Icons.Default.Notifications,
                             iconColor = PrimaryBlue,
-                            title = "Daily Reminders",
-                            subtitle = "Practice notifications",
+                            title = "Lembretes Diários",
+                            subtitle = "Notificações para praticar",
                             checked = notificationsEnabled,
                             onCheckedChange = { viewModel.setNotifications(it) }
                         )
@@ -191,8 +191,8 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                         SettingToggleRow(
                             icon = Icons.Default.Build,
                             iconColor = MaterialTheme.colorScheme.onSurface,
-                            title = "Dark Theme",
-                            subtitle = "Switch visual mode",
+                            title = "Tema Escuro",
+                            subtitle = "Mudar as cores da aplicação",
                             checked = darkThemeEnabled,
                             onCheckedChange = { viewModel.setDarkTheme(it) }
                         )
@@ -200,8 +200,8 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                         SettingActionRow(
                             icon = Icons.Default.Settings,
                             iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            title = "Daily Goal",
-                            subtitle = "$dailyGoal XP per day",
+                            title = "Meta Diária",
+                            subtitle = "$dailyGoal XP por dia",
                             onClick = {
                                 val newGoal = if (dailyGoal == 50) 100 else 50
                                 viewModel.setDailyGoal(newGoal)
@@ -219,7 +219,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                                 value = availableLanguages.find { it.first == targetLanguage }?.second ?: targetLanguage,
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text("Target Language") },
+                                label = { Text("Língua que quero aprender") },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage) },
                                 modifier = Modifier.fillMaxWidth().menuAnchor(),
                                 shape = RoundedCornerShape(12.dp),

@@ -41,29 +41,29 @@ data class Scenario(
 val defaultScenarios = listOf(
     Scenario(
         id = "restaurant",
-        title = "At the Restaurant",
-        description = "Practice ordering food, asking for recommendations, and paying the bill.",
+        title = "No Restaurante",
+        description = "Pratica pedir comida, pedir recomendações e pagar a conta.",
         systemContext = "You are a friendly waiter at a traditional restaurant. The user is a customer who is learning the language. You should speak only in the target language, keep your sentences relatively short, and be helpful. Start by greeting the customer and asking for their order.",
         emoji = "🍽️"
     ),
     Scenario(
         id = "airport",
-        title = "Airport Check-in",
-        description = "Check your bags, show your passport, and find your gate.",
+        title = "Check-in no Aeroporto",
+        description = "Despacha as tuas malas, mostra o passaporte e encontra a porta de embarque.",
         systemContext = "You are an airline check-in agent at an international airport. The user is a passenger. Speak only in the target language. Keep sentences short. Start by asking for their passport and ticket.",
         emoji = "✈️"
     ),
     Scenario(
         id = "interview",
-        title = "Job Interview",
-        description = "Practice professional vocabulary in a formal job interview setting.",
+        title = "Entrevista de Emprego",
+        description = "Pratica vocabulário profissional numa entrevista formal.",
         systemContext = "You are a hiring manager interviewing the user for a software engineering position. Speak only in the target language using formal tone. Start by welcoming them and asking them to introduce themselves.",
         emoji = "💼"
     ),
     Scenario(
         id = "directions",
-        title = "Asking for Directions",
-        description = "Lost in the city? Ask a local for directions to the train station.",
+        title = "Pedir Indicações",
+        description = "Perdido na cidade? Pede ajuda a um local para chegar à estação de comboios.",
         systemContext = "You are a local resident walking down the street. The user is a tourist asking for directions. Speak only in the target language. Be helpful but natural. Start by saying 'Hello, how can I help you?'.",
         emoji = "🗺️"
     )
@@ -78,10 +78,10 @@ fun ScenarioPickerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Choose a Scenario") },
+                title = { Text("Escolhe um Cenário") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )

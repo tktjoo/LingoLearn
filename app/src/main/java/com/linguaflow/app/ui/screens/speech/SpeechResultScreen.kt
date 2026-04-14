@@ -47,10 +47,10 @@ fun SpeechResultScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Assessment Results") },
+                title = { Text("Resultados da Avaliação") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
                     }
                 }
             )
@@ -67,7 +67,7 @@ fun SpeechResultScreen(
 
             // Overall Score
             Text(
-                text = "Overall Score",
+                text = "Pontuação Global",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -85,9 +85,9 @@ fun SpeechResultScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ScoreRadialChart(score = evaluation.accuracyScore, label = "Accuracy")
-                ScoreRadialChart(score = evaluation.fluencyScore, label = "Fluency")
-                ScoreRadialChart(score = evaluation.prosodyScore, label = "Prosody")
+                ScoreRadialChart(score = evaluation.accuracyScore, label = "Precisão")
+                ScoreRadialChart(score = evaluation.fluencyScore, label = "Fluência")
+                ScoreRadialChart(score = evaluation.prosodyScore, label = "Prosódia")
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -99,7 +99,7 @@ fun SpeechResultScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Word Breakdown",
+                        text = "Detalhes por Palavra",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp)
@@ -141,7 +141,7 @@ fun SpeechResultScreen(
                 onClick = onNavigateBack,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Continue")
+                Text("Continuar")
             }
         }
     }
