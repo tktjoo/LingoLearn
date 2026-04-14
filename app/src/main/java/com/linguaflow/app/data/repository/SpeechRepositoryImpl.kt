@@ -14,4 +14,8 @@ class SpeechRepositoryImpl @Inject constructor(
     ): SpeechEvaluation? {
         return azureSpeechService.evaluatePronunciation(referenceText, language)
     }
+
+    override suspend fun recognizeSpeech(language: String): String? {
+        return azureSpeechService.recognizeSpeech(language)
+    }
 }
