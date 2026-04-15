@@ -38,6 +38,14 @@ class UserPreferences @Inject constructor(
         preferences[PreferencesKeys.TARGET_LANGUAGE] ?: "en" // Default to English
     }
 
+    val isLoggedInFlow: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.IS_LOGGED_IN] ?: false
+    }
+
+    val hasCompletedOnboardingFlow: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] ?: false
+    }
+
     suspend fun setDarkTheme(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME] = enabled
@@ -62,10 +70,24 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    suspend fun setLoggedIn(loggedIn: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_LOGGED_IN] = loggedIn
+        }
+    }
+
+    suspend fun setHasCompletedOnboarding(completed: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] = completed
+        }
+    }
+
     private object PreferencesKeys {
         val DARK_THEME = booleanPreferencesKey("dark_theme")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val DAILY_GOAL_XP = intPreferencesKey("daily_goal_xp")
         val TARGET_LANGUAGE = stringPreferencesKey("target_language")
+        val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
     }
 }

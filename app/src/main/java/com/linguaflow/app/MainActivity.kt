@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.linguaflow.app.data.local.datastore.UserPreferences
 import com.linguaflow.app.ui.navigation.BottomNavBar
 import com.linguaflow.app.ui.navigation.NavGraph
@@ -28,6 +29,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val darkThemeEnabled by userPreferences.darkThemeFlow.collectAsState(initial = false)
+            val isLoggedIn by userPreferences.isLoggedInFlow.collectAsState(initial = false)
+            val hasCompletedOnboarding by userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
 
             LinguaFlowTheme(darkTheme = darkThemeEnabled) {
                 Surface(
@@ -36,14 +39,32 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
+                    val startDestination = when {
+                        !isLoggedIn -> com.linguaflow.app.ui.navigation.Screen.Login.route
+                        !hasCompletedOnboarding -> com.linguaflow.app.ui.navigation.Screen.OnboardingLanguage.route
+                        else -> com.linguaflow.app.ui.navigation.Screen.Home.route
+                    }
+
+                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                    val showBottomNav = currentRoute in listOf(
+                        com.linguaflow.app.ui.navigation.Screen.Home.route,
+                        com.linguaflow.app.ui.navigation.Screen.Vocabulary.route,
+                        com.linguaflow.app.ui.navigation.Screen.Practice.route,
+                        com.linguaflow.app.ui.navigation.Screen.Streak.route,
+                        com.linguaflow.app.ui.navigation.Screen.Profile.route
+                    )
+
                     Scaffold(
                         bottomBar = {
-                            BottomNavBar(navController = navController)
+                            if (showBottomNav) {
+                                BottomNavBar(navController = navController)
+                            }
                         }
                     ) { innerPadding ->
                         NavGraph(
                             navController = navController,
-                            paddingValues = innerPadding
+                            paddingValues = innerPadding,
+                            startDestination = startDestination
                         )
                     }
                 }
