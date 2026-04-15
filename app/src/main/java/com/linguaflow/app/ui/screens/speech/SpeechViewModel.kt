@@ -31,11 +31,9 @@ class SpeechViewModel @Inject constructor(
         _uiState.value = SpeechUiState.Recording
 
         viewModelScope.launch {
-            // Note: The Azure SDK recognition is currently blocking in the data layer wrapper.
-            // We set to "Evaluating" once the SDK call starts processing the payload.
-            _uiState.value = SpeechUiState.Evaluating
-
             val result = evaluateSpeechUseCase(referenceText, language)
+
+            _uiState.value = SpeechUiState.Evaluating
 
             if (result != null) {
                 _uiState.value = SpeechUiState.Result(result)
