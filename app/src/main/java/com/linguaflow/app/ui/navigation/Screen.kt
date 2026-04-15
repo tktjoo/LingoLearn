@@ -1,6 +1,10 @@
 package com.linguaflow.app.ui.navigation
 
 sealed class Screen(val route: String) {
+    object Login : Screen("login")
+    object Otp : Screen("otp")
+    object OnboardingLanguage : Screen("onboarding_language")
+
     object Home : Screen("home")
     object Vocabulary : Screen("vocabulary")
     object VocabularyDetail : Screen("vocabulary_detail/{wordId}") {

@@ -24,6 +24,9 @@ import com.linguaflow.app.ui.screens.roleplay.ScenarioPickerScreen
 import com.linguaflow.app.ui.screens.speech.SpeechResultScreen
 import com.linguaflow.app.ui.screens.streak.StreakScreen
 import com.linguaflow.app.ui.screens.vocabulary.AddVocabularyScreen
+import com.linguaflow.app.ui.screens.auth.LoginScreen
+import com.linguaflow.app.ui.screens.auth.OnboardingLanguageScreen
+import com.linguaflow.app.ui.screens.auth.OtpScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyDetailScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyListScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyViewModel
@@ -32,13 +35,42 @@ import com.linguaflow.app.ui.screens.speech.SpeechViewModel
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    startDestination: String = Screen.Home.route
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = startDestination,
         modifier = Modifier.padding(paddingValues)
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateToOtp = { navController.navigate(Screen.Otp.route) }
+            )
+        }
+        composable(Screen.Otp.route) {
+            OtpScreen(
+                onNavigateToOnboarding = {
+                    navController.navigate(Screen.OnboardingLanguage.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(Screen.OnboardingLanguage.route) {
+            OnboardingLanguageScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.OnboardingLanguage.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToPractice = { navController.navigate(Screen.Practice.route) },
