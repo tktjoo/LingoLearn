@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.linguaflow.app.domain.model.ConversationMessage
 import com.linguaflow.app.domain.model.SenderType
+import com.linguaflow.app.data.local.datastore.UserPreferences
 import com.linguaflow.app.domain.usecase.conversation.ChatWithAIUseCase
 import com.linguaflow.app.domain.usecase.speech.RecognizeSpeechUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RoleplayViewModel @Inject constructor(
     private val chatWithAIUseCase: ChatWithAIUseCase,
-    private val recognizeSpeechUseCase: RecognizeSpeechUseCase
+    private val recognizeSpeechUseCase: RecognizeSpeechUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private var systemContext: String = ""
@@ -55,12 +58,34 @@ class RoleplayViewModel @Inject constructor(
 
         viewModelScope.launch {
             _isRecording.value = true
-            val recognizedText = recognizeSpeechUseCase(language = "pt-PT")
+            val targetLanguage = userPreferences.targetLanguageFlow.first()
+            val azureLocale = mapLanguageCodeToAzureLocale(targetLanguage)
+
+            val recognizedText = recognizeSpeechUseCase(language = azureLocale)
             _isRecording.value = false
 
             if (!recognizedText.isNullOrBlank()) {
                 sendMessage(recognizedText)
             }
+        }
+    }
+
+    private fun mapLanguageCodeToAzureLocale(code: String): String {
+        return when (code) {
+            "en" -> "en-US"
+            "es" -> "es-ES"
+            "fr" -> "fr-FR"
+            "de" -> "de-DE"
+            "it" -> "it-IT"
+            "nl" -> "nl-NL"
+            "ko" -> "ko-KR"
+            "ja" -> "ja-JP"
+            "zh" -> "zh-CN"
+            "vi" -> "vi-VN"
+            "hi" -> "hi-IN"
+            "ar" -> "ar-SA"
+            "th" -> "th-TH"
+            else -> "en-US"
         }
     }
 
