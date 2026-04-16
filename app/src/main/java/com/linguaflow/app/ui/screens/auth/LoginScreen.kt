@@ -1,5 +1,6 @@
 package com.linguaflow.app.ui.screens.auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,12 +38,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.linguaflow.app.ui.theme.PrimaryBlue
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun LoginScreen(
-    onNavigateToOtp: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -50,22 +59,19 @@ fun LoginScreen(
 
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-    val otpSent by viewModel.otpSent.collectAsState()
 
     val isLoggedIn by viewModel.userPreferences.isLoggedInFlow.collectAsState(initial = false)
-
-    LaunchedEffect(otpSent) {
-        if (otpSent) {
-            onNavigateToOtp()
-        }
-    }
+    val hasCompletedOnboarding by viewModel.userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(isLoggedIn) {
-        // If Google login succeeds immediately without OTP
         if (isLoggedIn) {
-            // Re-use logic: let NavGraph re-eval startDestination,
-            // but if we are here we should just trigger otp which navigates automatically or directly to home.
-            onNavigateToOtp()
+            if (hasCompletedOnboarding) {
+                onNavigateToHome()
+            } else {
+                onNavigateToOnboarding()
+            }
         }
     }
 
@@ -155,7 +161,35 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedButton(
-                onClick = { viewModel.authenticateWithGoogle() },
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.setLoading(true)
+                        try {
+                            val credentialManager = CredentialManager.create(context)
+                            // NOTE: For a real app, you should use the Web Client ID from your google-services.json
+                            // This is typically the client_id with client_type: 3
+                            val googleIdOption = GetGoogleIdOption.Builder()
+                                .setFilterByAuthorizedAccounts(false)
+                                .setServerClientId("123456789012-abcdef1234567890abcdef1234567890.apps.googleusercontent.com") // Replace with actual Web Client ID
+                                .setAutoSelectEnabled(true)
+                                .build()
+
+                            val request = GetCredentialRequest.Builder()
+                                .addCredentialOption(googleIdOption)
+                                .build()
+
+                            val result = credentialManager.getCredential(context, request)
+                            viewModel.authenticateWithGoogle(result)
+                        } catch (e: GetCredentialException) {
+                            Log.e("LoginScreen", "GetCredentialException", e)
+                            viewModel.setLoading(false)
+                            // Handle failure or cancellation
+                        } catch (e: Exception) {
+                            Log.e("LoginScreen", "Exception", e)
+                            viewModel.setLoading(false)
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
