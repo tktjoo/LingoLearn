@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.linguaflow.app.ui.theme.PrimaryBlue
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
@@ -191,16 +192,26 @@ fun LoginScreen(
                                 .build()
 
                             // CredentialManager requires an Activity context specifically
+
+
                             val activityContext = context as? ComponentActivity
                             if (activityContext != null) {
                                 viewModel.setError("A abrir janela da Google...")
-                                val result = credentialManager.getCredential(activityContext, request)
+
+                                val result = withTimeout(15000L) { // 15 seconds timeout
+                                    credentialManager.getCredential(activityContext, request)
+                                }
+
                                 viewModel.setError("Token recebido. A ligar ao Firebase...")
                                 viewModel.authenticateWithGoogle(result)
                             } else {
                                 viewModel.setError("Erro interno: Contexto inválido")
                                 viewModel.setGoogleLoading(false)
                             }
+                        } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
+                            Log.e("LoginScreen", "TimeoutException", e)
+                            viewModel.setError("Tempo limite excedido. Verifica o Web Client ID e SHA-1 no Firebase.")
+                            viewModel.setGoogleLoading(false)
                         } catch (e: GetCredentialException) {
                             Log.e("LoginScreen", "GetCredentialException type: ${e.type}", e)
                             viewModel.setError("Erro (${e.type}): ${e.message ?: "Cancelado"}")
