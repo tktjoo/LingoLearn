@@ -58,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.linguaflow.app.ui.theme.PrimaryBlue
 import com.linguaflow.app.ui.theme.SuccessGreen
 import com.linguaflow.app.ui.theme.WarningYellow
+import androidx.compose.material.icons.filled.ExitToApp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,7 +115,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "João",
+                    text = viewModel.getUserName(),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -242,6 +243,16 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                                 }
                             }
                         }
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                        SettingActionRow(
+                            icon = Icons.Default.ExitToApp,
+                            iconColor = MaterialTheme.colorScheme.error,
+                            title = "Terminar Sessão",
+                            subtitle = "Sair da conta atual",
+                            onClick = {
+                                viewModel.logout()
+                            }
+                        )
                     }
                 }
             }
