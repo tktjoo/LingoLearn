@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,6 +65,11 @@ class ProfileViewModel @Inject constructor(
             initialValue = "en"
         )
 
+    fun getUserName(): String {
+        val auth = FirebaseAuth.getInstance()
+        return auth.currentUser?.displayName?.takeIf { it.isNotBlank() } ?: "Utilizador"
+    }
+
     fun setDarkTheme(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setDarkTheme(enabled)
@@ -85,6 +91,13 @@ class ProfileViewModel @Inject constructor(
     fun setTargetLanguage(languageCode: String) {
         viewModelScope.launch {
             userPreferences.setTargetLanguage(languageCode)
+        }
+    }
+
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        viewModelScope.launch {
+            userPreferences.setLoggedIn(false)
         }
     }
 }
