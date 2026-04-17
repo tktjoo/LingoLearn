@@ -48,6 +48,8 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.ComponentActivity
+import java.security.MessageDigest
+import java.util.UUID
 
 @Composable
 fun LoginScreen(
@@ -168,9 +170,18 @@ fun LoginScreen(
                         viewModel.setGoogleLoading(true)
                         try {
                             val credentialManager = CredentialManager.create(context)
+
+                            // Generate a random nonce to ensure Google prompts for the account
+                            val rawNonce = UUID.randomUUID().toString()
+                            val bytes = rawNonce.toByteArray()
+                            val md = MessageDigest.getInstance("SHA-256")
+                            val digest = md.digest(bytes)
+                            val hashedNonce = digest.joinToString("") { "%02x".format(it) }
+
                             val googleIdOption = GetGoogleIdOption.Builder()
                                 .setFilterByAuthorizedAccounts(false)
                                 .setServerClientId("60256713677-uqpoi0fu4hk04o5caqb9sbmhfigq66d8.apps.googleusercontent.com")
+                                .setNonce(hashedNonce)
                                 .setAutoSelectEnabled(true)
                                 .build()
 
