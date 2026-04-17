@@ -52,10 +52,8 @@ fun SpeechPracticeScreen(
     viewModel: SpeechViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val referenceText by viewModel.currentReferenceText.collectAsState()
     val recordAudioPermission = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
-
-    // For demonstration, a static reference text
-    val referenceText = "The quick brown fox jumps over the lazy dog."
 
     LaunchedEffect(uiState) {
         if (uiState is SpeechUiState.Result) {
@@ -114,7 +112,7 @@ fun SpeechPracticeScreen(
                         isRecording = false,
                         onClick = {
                             if (recordAudioPermission.status.isGranted) {
-                                viewModel.evaluateSpeech(referenceText)
+                                viewModel.evaluateSpeech()
                             } else {
                                 recordAudioPermission.launchPermissionRequest()
                             }

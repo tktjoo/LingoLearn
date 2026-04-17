@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,27 +30,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.activity.compose.BackHandler
 import com.linguaflow.app.ui.theme.PrimaryBlue
-
-import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.flow.first
 
 @Composable
 fun OtpScreen(
-    onNavigateToOnboarding: () -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    var code by remember { mutableStateOf("") }
+    var otpCode by remember { mutableStateOf("") }
+
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val targetEmail by viewModel.targetEmail.collectAsState()
 
     val isLoggedIn by viewModel.userPreferences.isLoggedInFlow.collectAsState(initial = false)
+    val hasCompletedOnboarding by viewModel.userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            val hasCompleted = viewModel.userPreferences.hasCompletedOnboardingFlow.first()
-            if (hasCompleted) {
+            if (hasCompletedOnboarding) {
                 onNavigateToHome()
             } else {
                 onNavigateToOnboarding()
@@ -57,18 +59,23 @@ fun OtpScreen(
         }
     }
 
+    BackHandler {
+        viewModel.resetOtpState()
+        onNavigateBack()
+    }
+
     Scaffold { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(32.dp),
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Verificar Email",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "Verificação de Email",
+                style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryBlue
             )
@@ -76,8 +83,8 @@ fun OtpScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Enviámos um código OTP para o teu email. Por favor insere-o abaixo.",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "Enviámos um código numérico para o seu email:\n$targetEmail",
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
@@ -93,12 +100,14 @@ fun OtpScreen(
             }
 
             OutlinedTextField(
-                value = code,
+                value = otpCode,
                 onValueChange = {
-                    code = it
-                    viewModel.clearError()
+                    if (it.length <= 6) {
+                        otpCode = it
+                        viewModel.clearError()
+                    }
                 },
-                label = { Text("Código de 4 ou 6 dígitos") },
+                label = { Text("Código de 6 dígitos") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -108,18 +117,14 @@ fun OtpScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { viewModel.verifyOtp(code) },
+                onClick = { viewModel.verifyOtp(otpCode) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = !isLoading && code.isNotBlank()
+                enabled = otpCode.length == 6
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                } else {
-                    Text("Confirmar Código", style = MaterialTheme.typography.titleMedium)
-                }
+                Text("Confirmar Código", style = MaterialTheme.typography.titleMedium)
             }
         }
     }

@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -109,6 +110,7 @@ fun SpeechResultScreen(
                         evaluation.wordDetails.forEach { wordAssessment ->
                             val color = when {
                                 wordAssessment.errorType == "Omission" -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                wordAssessment.errorType == "Insertion" -> ErrorRed.copy(alpha = 0.7f)
                                 wordAssessment.accuracyScore >= 80 -> SuccessGreen
                                 wordAssessment.accuracyScore >= 60 -> WarningYellow
                                 else -> ErrorRed
@@ -119,7 +121,8 @@ fun SpeechResultScreen(
                             withStyle(
                                 style = SpanStyle(
                                     color = color,
-                                    textDecoration = if (isStrikethrough) androidx.compose.ui.text.style.TextDecoration.LineThrough else null
+                                    textDecoration = if (isStrikethrough) androidx.compose.ui.text.style.TextDecoration.LineThrough else null,
+                                    background = if (wordAssessment.errorType == "Insertion") ErrorRed.copy(alpha=0.1f) else Color.Transparent
                                 )
                             ) {
                                 append(wordAssessment.word + " ")
