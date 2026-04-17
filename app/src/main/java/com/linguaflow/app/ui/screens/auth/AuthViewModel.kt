@@ -110,6 +110,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun setError(msg: String) {
+        _error.value = msg
+    }
+
     fun clearError() {
         _error.value = null
     }
