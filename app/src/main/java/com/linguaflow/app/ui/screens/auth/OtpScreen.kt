@@ -1,7 +1,5 @@
 package com.linguaflow.app.ui.screens.auth
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,15 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,28 +28,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.activity.compose.BackHandler
 import com.linguaflow.app.ui.theme.PrimaryBlue
 
 @Composable
-fun LoginScreen(
-    onNavigateToOtp: () -> Unit,
-    onNavigateToRegister: () -> Unit,
+fun OtpScreen(
+    onNavigateToHome: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var otpCode by remember { mutableStateOf("") }
 
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-    val otpSent by viewModel.otpSent.collectAsState()
+    val targetEmail by viewModel.targetEmail.collectAsState()
 
-    LaunchedEffect(otpSent) {
-        if (otpSent) {
-            onNavigateToOtp()
+    val isLoggedIn by viewModel.userPreferences.isLoggedInFlow.collectAsState(initial = false)
+    val hasCompletedOnboarding by viewModel.userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            if (hasCompletedOnboarding) {
+                onNavigateToHome()
+            } else {
+                onNavigateToOnboarding()
+            }
         }
+    }
+
+    BackHandler {
+        viewModel.resetOtpState()
+        onNavigateBack()
     }
 
     Scaffold { padding ->
@@ -65,20 +69,24 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(32.dp),
+                .padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Bem-vindo ao",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "LingoLearn",
-                style = MaterialTheme.typography.displayMedium,
+                text = "Verificação de Email",
+                style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryBlue
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Enviámos um código numérico para o seu email:\n$targetEmail",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -92,31 +100,15 @@ fun LoginScreen(
             }
 
             OutlinedTextField(
-                value = email,
+                value = otpCode,
                 onValueChange = {
-                    email = it
-                    viewModel.clearError()
+                    if (it.length <= 6) {
+                        otpCode = it
+                        viewModel.clearError()
+                    }
                 },
-                label = { Text("Email") },
-                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    viewModel.clearError()
-                },
-                label = { Text("Password") },
-                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                label = { Text("Código de 6 dígitos") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
@@ -125,27 +117,14 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { viewModel.loginWithEmail(email, password) },
+                onClick = { viewModel.verifyOtp(otpCode) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = !isLoading
+                enabled = otpCode.length == 6
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                } else {
-                    Text("Entrar", style = MaterialTheme.typography.titleMedium)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            androidx.compose.material3.TextButton(
-                onClick = { onNavigateToRegister() },
-                enabled = !isLoading
-            ) {
-                Text("Não tem conta? Criar uma", color = PrimaryBlue)
+                Text("Confirmar Código", style = MaterialTheme.typography.titleMedium)
             }
         }
     }
