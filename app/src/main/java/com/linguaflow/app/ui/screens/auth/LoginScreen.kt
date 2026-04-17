@@ -182,7 +182,8 @@ fun LoginScreen(
                                 .setFilterByAuthorizedAccounts(false)
                                 .setServerClientId("60256713677-uqpoi0fu4hk04o5caqb9sbmhfigq66d8.apps.googleusercontent.com")
                                 .setNonce(hashedNonce)
-                                .setAutoSelectEnabled(true)
+                                // Disable auto-select to prevent silent hangs on some devices
+                                .setAutoSelectEnabled(false)
                                 .build()
 
                             val request = GetCredentialRequest.Builder()
@@ -192,7 +193,9 @@ fun LoginScreen(
                             // CredentialManager requires an Activity context specifically
                             val activityContext = context as? ComponentActivity
                             if (activityContext != null) {
+                                viewModel.setError("A abrir janela da Google...")
                                 val result = credentialManager.getCredential(activityContext, request)
+                                viewModel.setError("Token recebido. A ligar ao Firebase...")
                                 viewModel.authenticateWithGoogle(result)
                             } else {
                                 viewModel.setError("Erro interno: Contexto inválido")
