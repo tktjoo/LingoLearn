@@ -56,6 +56,7 @@ import java.util.UUID
 fun LoginScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToOnboarding: () -> Unit,
+    onNavigateToRegister: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -145,7 +146,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { viewModel.authenticateWithEmail(email, password) },
+                onClick = { viewModel.loginWithEmail(email, password) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -155,15 +156,24 @@ fun LoginScreen(
                 if (isLoading) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
-                    Text("Entrar / Registar", style = MaterialTheme.typography.titleMedium)
+                    Text("Entrar", style = MaterialTheme.typography.titleMedium)
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            androidx.compose.material3.TextButton(
+                onClick = { onNavigateToRegister() },
+                enabled = !isLoading && !isGoogleLoading
+            ) {
+                Text("Não tem conta? Criar uma", color = PrimaryBlue)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text("OU", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
                 onClick = {

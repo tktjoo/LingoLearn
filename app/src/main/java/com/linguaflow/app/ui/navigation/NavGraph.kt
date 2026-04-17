@@ -25,6 +25,7 @@ import com.linguaflow.app.ui.screens.speech.SpeechResultScreen
 import com.linguaflow.app.ui.screens.streak.StreakScreen
 import com.linguaflow.app.ui.screens.vocabulary.AddVocabularyScreen
 import com.linguaflow.app.ui.screens.auth.LoginScreen
+import com.linguaflow.app.ui.screens.auth.RegisterScreen
 import com.linguaflow.app.ui.screens.auth.OnboardingLanguageScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyDetailScreen
 import com.linguaflow.app.ui.screens.vocabulary.VocabularyListScreen
@@ -44,6 +45,24 @@ fun NavGraph(
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToOnboarding = {
+                    navController.navigate(Screen.OnboardingLanguage.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onNavigateBack = { navController.popBackStack() },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
