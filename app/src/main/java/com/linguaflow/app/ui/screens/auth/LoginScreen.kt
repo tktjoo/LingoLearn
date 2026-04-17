@@ -182,10 +182,12 @@ fun LoginScreen(
                             viewModel.authenticateWithGoogle(result)
                         } catch (e: GetCredentialException) {
                             Log.e("LoginScreen", "GetCredentialException", e)
+                            viewModel.setError("Erro: ${e.message ?: "Desconhecido"}")
                             viewModel.setLoading(false)
                             // Handle failure or cancellation
                         } catch (e: Exception) {
                             Log.e("LoginScreen", "Exception", e)
+                            viewModel.setError("Erro inesperado: ${e.message ?: "Desconhecido"}")
                             viewModel.setLoading(false)
                         }
                     }
