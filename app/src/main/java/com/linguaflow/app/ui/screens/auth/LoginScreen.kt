@@ -90,7 +90,7 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "LinguaFlow",
+                text = "LingoLearn",
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
                 color = PrimaryBlue
@@ -181,13 +181,12 @@ fun LoginScreen(
                             val result = credentialManager.getCredential(context, request)
                             viewModel.authenticateWithGoogle(result)
                         } catch (e: GetCredentialException) {
-                            Log.e("LoginScreen", "GetCredentialException", e)
-                            viewModel.setError("Erro: ${e.message ?: "Desconhecido"}")
+                            Log.e("LoginScreen", "GetCredentialException type: ${e.type}", e)
+                            viewModel.setError("Erro (${e.type}): ${e.message ?: "Desconhecido"}")
                             viewModel.setLoading(false)
-                            // Handle failure or cancellation
                         } catch (e: Exception) {
-                            Log.e("LoginScreen", "Exception", e)
-                            viewModel.setError("Erro inesperado: ${e.message ?: "Desconhecido"}")
+                            Log.e("LoginScreen", "Exception: ${e.javaClass.simpleName}", e)
+                            viewModel.setError("Falha (${e.javaClass.simpleName}): ${e.message ?: "Verifique as configurações do emulador/SHA1"}")
                             viewModel.setLoading(false)
                         }
                     }
