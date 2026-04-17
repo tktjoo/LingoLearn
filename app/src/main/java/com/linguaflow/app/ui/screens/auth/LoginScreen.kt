@@ -47,6 +47,7 @@ import com.linguaflow.app.ui.theme.PrimaryBlue
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.activity.ComponentActivity
 
 @Composable
 fun LoginScreen(
@@ -58,6 +59,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     val isLoading by viewModel.isLoading.collectAsState()
+    val isGoogleLoading by viewModel.isGoogleLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
     val isLoggedIn by viewModel.userPreferences.isLoggedInFlow.collectAsState(initial = false)
@@ -145,7 +147,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = !isLoading
+                enabled = !isLoading && !isGoogleLoading
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
@@ -163,11 +165,9 @@ fun LoginScreen(
             OutlinedButton(
                 onClick = {
                     coroutineScope.launch {
-                        viewModel.setLoading(true)
+                        viewModel.setGoogleLoading(true)
                         try {
                             val credentialManager = CredentialManager.create(context)
-                            // NOTE: For a real app, you should use the Web Client ID from your google-services.json
-                            // This is typically the client_id with client_type: 3
                             val googleIdOption = GetGoogleIdOption.Builder()
                                 .setFilterByAuthorizedAccounts(false)
                                 .setServerClientId("60256713677-uqpoi0fu4hk04o5caqb9sbmhfigq66d8.apps.googleusercontent.com")
@@ -178,16 +178,23 @@ fun LoginScreen(
                                 .addCredentialOption(googleIdOption)
                                 .build()
 
-                            val result = credentialManager.getCredential(context, request)
-                            viewModel.authenticateWithGoogle(result)
+                            // CredentialManager requires an Activity context specifically
+                            val activityContext = context as? ComponentActivity
+                            if (activityContext != null) {
+                                val result = credentialManager.getCredential(activityContext, request)
+                                viewModel.authenticateWithGoogle(result)
+                            } else {
+                                viewModel.setError("Erro interno: Contexto inválido")
+                                viewModel.setGoogleLoading(false)
+                            }
                         } catch (e: GetCredentialException) {
                             Log.e("LoginScreen", "GetCredentialException type: ${e.type}", e)
-                            viewModel.setError("Erro (${e.type}): ${e.message ?: "Desconhecido"}")
-                            viewModel.setLoading(false)
+                            viewModel.setError("Erro (${e.type}): ${e.message ?: "Cancelado"}")
+                            viewModel.setGoogleLoading(false)
                         } catch (e: Exception) {
                             Log.e("LoginScreen", "Exception: ${e.javaClass.simpleName}", e)
-                            viewModel.setError("Falha (${e.javaClass.simpleName}): ${e.message ?: "Verifique as configurações do emulador/SHA1"}")
-                            viewModel.setLoading(false)
+                            viewModel.setError("Falha (${e.javaClass.simpleName}): ${e.message ?: "Verifique Google Play"}")
+                            viewModel.setGoogleLoading(false)
                         }
                     }
                 },
@@ -195,9 +202,13 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
-                enabled = !isLoading
+                enabled = !isLoading && !isGoogleLoading
             ) {
-                Text("Continuar com Google", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                if (isGoogleLoading) {
+                    CircularProgressIndicator(color = PrimaryBlue, modifier = Modifier.size(24.dp))
+                } else {
+                    Text("Continuar com Google", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                }
             }
         }
     }

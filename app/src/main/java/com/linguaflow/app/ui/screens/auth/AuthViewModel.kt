@@ -27,6 +27,9 @@ class AuthViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _isGoogleLoading = MutableStateFlow(false)
+    val isGoogleLoading: StateFlow<Boolean> = _isGoogleLoading
+
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
@@ -75,7 +78,7 @@ class AuthViewModel @Inject constructor(
 
     fun authenticateWithGoogle(response: GetCredentialResponse) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _isGoogleLoading.value = true
             _error.value = null
             try {
                 val credential = response.credential
@@ -94,13 +97,17 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Erro no Google Sign-In: ${e.localizedMessage}"
             } finally {
-                _isLoading.value = false
+                _isGoogleLoading.value = false
             }
         }
     }
 
     fun setLoading(loading: Boolean) {
         _isLoading.value = loading
+    }
+
+    fun setGoogleLoading(loading: Boolean) {
+        _isGoogleLoading.value = loading
     }
 
     fun completeOnboarding(languageCode: String) {
