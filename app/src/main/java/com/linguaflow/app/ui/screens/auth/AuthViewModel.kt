@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.linguaflow.app.data.local.datastore.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun authenticateWithEmail(email: String, pass: String) {
+    fun loginWithEmail(email: String, pass: String) {
         if (email.isBlank() || pass.isBlank()) {
             _error.value = "Preencha todos os campos."
             return
@@ -51,25 +53,48 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                // Try to sign in first
                 auth.signInWithEmailAndPassword(email, pass).await()
                 userPreferences.setLoggedIn(true)
             } catch (e: Exception) {
-                // Distinguish between invalid password and user not found
                 if (e is FirebaseAuthInvalidCredentialsException && e.errorCode == "ERROR_WRONG_PASSWORD") {
                     _error.value = "Password inválida."
                 } else if (e is FirebaseAuthInvalidUserException ||
                            (e is FirebaseAuthInvalidCredentialsException && e.errorCode != "ERROR_WRONG_PASSWORD")) {
-                    // If user not found, attempt to register
-                    try {
-                        auth.createUserWithEmailAndPassword(email, pass).await()
-                        userPreferences.setLoggedIn(true)
-                    } catch (e2: Exception) {
-                        _error.value = "Erro no registo: ${e2.localizedMessage}"
-                    }
+                    _error.value = "Conta não encontrada. Crie uma conta primeiro."
                 } else {
                     _error.value = "Erro na autenticação: ${e.localizedMessage}"
                 }
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun registerWithEmail(name: String, email: String, pass: String) {
+        if (name.isBlank() || email.isBlank() || pass.isBlank()) {
+            _error.value = "Preencha todos os campos."
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val result = auth.createUserWithEmailAndPassword(email, pass).await()
+
+                // Update user profile with name
+                val user = result.user
+                if (user != null) {
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+                    user.updateProfile(profileUpdates).await()
+                }
+
+                userPreferences.setLoggedIn(true)
+            } catch (e: FirebaseAuthUserCollisionException) {
+                _error.value = "Este email já está registado."
+            } catch (e: Exception) {
+                _error.value = "Erro no registo: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
