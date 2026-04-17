@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val darkThemeEnabled by userPreferences.darkThemeFlow.collectAsState(initial = false)
-            val isLoggedIn by userPreferences.isLoggedInFlow.collectAsState(initial = false)
-            val hasCompletedOnboarding by userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
+            val isLoggedIn by userPreferences.isLoggedInFlow.collectAsState(initial = null)
+            val hasCompletedOnboarding by userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = null)
 
             LinguaFlowTheme(darkTheme = darkThemeEnabled) {
                 Surface(
@@ -39,33 +39,35 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
 
-                    val startDestination = when {
-                        !isLoggedIn -> com.linguaflow.app.ui.navigation.Screen.Login.route
-                        !hasCompletedOnboarding -> com.linguaflow.app.ui.navigation.Screen.OnboardingLanguage.route
-                        else -> com.linguaflow.app.ui.navigation.Screen.Home.route
-                    }
-
-                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                    val showBottomNav = currentRoute in listOf(
-                        com.linguaflow.app.ui.navigation.Screen.Home.route,
-                        com.linguaflow.app.ui.navigation.Screen.Vocabulary.route,
-                        com.linguaflow.app.ui.navigation.Screen.Practice.route,
-                        com.linguaflow.app.ui.navigation.Screen.Streak.route,
-                        com.linguaflow.app.ui.navigation.Screen.Profile.route
-                    )
-
-                    Scaffold(
-                        bottomBar = {
-                            if (showBottomNav) {
-                                BottomNavBar(navController = navController)
-                            }
+                    if (isLoggedIn != null && hasCompletedOnboarding != null) {
+                        val startDestination = when {
+                            isLoggedIn == false -> com.linguaflow.app.ui.navigation.Screen.Login.route
+                            hasCompletedOnboarding == false -> com.linguaflow.app.ui.navigation.Screen.OnboardingLanguage.route
+                            else -> com.linguaflow.app.ui.navigation.Screen.Home.route
                         }
-                    ) { innerPadding ->
-                        NavGraph(
-                            navController = navController,
-                            paddingValues = innerPadding,
-                            startDestination = startDestination
+
+                        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                        val showBottomNav = currentRoute in listOf(
+                            com.linguaflow.app.ui.navigation.Screen.Home.route,
+                            com.linguaflow.app.ui.navigation.Screen.Vocabulary.route,
+                            com.linguaflow.app.ui.navigation.Screen.Practice.route,
+                            com.linguaflow.app.ui.navigation.Screen.Streak.route,
+                            com.linguaflow.app.ui.navigation.Screen.Profile.route
                         )
+
+                        Scaffold(
+                            bottomBar = {
+                                if (showBottomNav) {
+                                    BottomNavBar(navController = navController)
+                                }
+                            }
+                        ) { innerPadding ->
+                            NavGraph(
+                                navController = navController,
+                                paddingValues = innerPadding,
+                                startDestination = startDestination
+                            )
+                        }
                     }
                 }
             }

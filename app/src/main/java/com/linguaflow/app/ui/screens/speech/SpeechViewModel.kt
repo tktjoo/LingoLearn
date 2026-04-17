@@ -65,6 +65,8 @@ class SpeechViewModel @Inject constructor(
 
             _uiState.value = SpeechUiState.Evaluating
 
+            _uiState.value = SpeechUiState.Evaluating
+
             if (result != null) {
                 _uiState.value = SpeechUiState.Result(result)
             } else {
