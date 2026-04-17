@@ -46,8 +46,7 @@ import com.linguaflow.app.ui.theme.PrimaryBlue
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToHome: () -> Unit,
-    onNavigateToOnboarding: () -> Unit,
+    onNavigateToOtp: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     var name by remember { mutableStateOf("") }
@@ -56,17 +55,11 @@ fun RegisterScreen(
 
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val otpSent by viewModel.otpSent.collectAsState()
 
-    val isLoggedIn by viewModel.userPreferences.isLoggedInFlow.collectAsState(initial = false)
-    val hasCompletedOnboarding by viewModel.userPreferences.hasCompletedOnboardingFlow.collectAsState(initial = false)
-
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            if (hasCompletedOnboarding) {
-                onNavigateToHome()
-            } else {
-                onNavigateToOnboarding()
-            }
+    LaunchedEffect(otpSent) {
+        if (otpSent) {
+            onNavigateToOtp()
         }
     }
 
