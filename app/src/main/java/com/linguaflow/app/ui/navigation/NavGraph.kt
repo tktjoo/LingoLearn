@@ -3,6 +3,9 @@ package com.linguaflow.app.ui.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +84,7 @@ fun NavGraph(
             val wordId = backStackEntry.arguments?.getLong("wordId") ?: return@composable
             val parentEntry = remember(backStackEntry) {
                 try { navController.getBackStackEntry(Screen.Vocabulary.route) }
-                catch (e: Exception) { backStackEntry }
+                catch (_: Exception) { backStackEntry }
             }
             val viewModel: VocabularyViewModel = hiltViewModel(parentEntry)
             VocabularyDetailScreen(
@@ -93,7 +96,7 @@ fun NavGraph(
         composable(Screen.AddVocabulary.route) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 try { navController.getBackStackEntry(Screen.Vocabulary.route) }
-                catch (e: Exception) { backStackEntry }
+                catch (_: Exception) { backStackEntry }
             }
             val viewModel: VocabularyViewModel = hiltViewModel(parentEntry)
             AddVocabularyScreen(
@@ -140,18 +143,20 @@ fun NavGraph(
                 navController.getBackStackEntry(Screen.SpeechPractice.route)
             }
             val viewModel: SpeechViewModel = hiltViewModel(parentEntry)
-            val uiState = viewModel.uiState.value
+
+            // Observação reativa corrigida
+            val uiState by viewModel.uiState.collectAsState()
 
             if (uiState is SpeechUiState.Result) {
                 SpeechResultScreen(
-                    evaluation = uiState.evaluation,
+                    evaluation = (uiState as SpeechUiState.Result).evaluation,
                     onNavigateBack = {
                         navController.popBackStack(Screen.Practice.route, false)
                         viewModel.resetState()
                     }
                 )
             } else {
-                androidx.compose.runtime.LaunchedEffect(Unit) { navController.popBackStack() }
+                LaunchedEffect(Unit) { navController.popBackStack() }
             }
         }
         composable(
@@ -164,7 +169,7 @@ fun NavGraph(
             val title = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("title") ?: "Roleplay", "UTF-8")
             val context = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("context") ?: "", "UTF-8")
             val viewModel: RoleplayViewModel = hiltViewModel()
-            androidx.compose.runtime.LaunchedEffect(context) { viewModel.initializeScenario(context) }
+            LaunchedEffect(context) { viewModel.initializeScenario(context) }
             RoleplayScreen(title = title, onNavigateBack = { navController.popBackStack() }, viewModel = viewModel)
         }
         composable(Screen.Streak.route) { StreakScreen() }
