@@ -56,11 +56,13 @@ android {
     val azureKey = localProperties.getProperty("AZURE_SPEECH_KEY") ?: "YOUR_AZURE_SUBSCRIPTION_KEY"
     val azureRegion = localProperties.getProperty("AZURE_SPEECH_REGION") ?: "YOUR_AZURE_REGION"
     val openAiKey = localProperties.getProperty("OPENAI_API_KEY") ?: "YOUR_OPENAI_API_KEY"
+    val emailJsKey = localProperties.getProperty("EMAILJS_PRIVATE_KEY") ?: "YOUR_EMAILJS_PRIVATE_KEY"
 
     defaultConfig {
         buildConfigField("String", "AZURE_SPEECH_KEY", "\"$azureKey\"")
         buildConfigField("String", "AZURE_SPEECH_REGION", "\"$azureRegion\"")
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
+        buildConfigField("String", "EMAILJS_PRIVATE_KEY", "\"$emailJsKey\"")
     }
 
     packaging {
