@@ -8,9 +8,11 @@ import com.linguaflow.app.data.remote.emailjs.EmailJsApi
 import com.linguaflow.app.data.remote.emailjs.EmailJsRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import android.util.Log
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,7 +64,12 @@ class AuthViewModel @Inject constructor(
                 )
                 emailJsApi.sendEmail(request)
                 _otpSent.value = true
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("AuthViewModel", "EmailJS Error (HTTP ${e.code()}): $errorBody")
+                _error.value = "Erro ao enviar email OTP: ${e.code()} - $errorBody"
             } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error sending OTP email", e)
                 _error.value = "Erro ao enviar email OTP: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
