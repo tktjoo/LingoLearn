@@ -2,6 +2,7 @@ package com.linguaflow.app.ui.screens.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.linguaflow.app.BuildConfig
 import com.linguaflow.app.data.local.datastore.UserPreferences
 import com.linguaflow.app.data.remote.emailjs.EmailJsApi
 import com.linguaflow.app.data.remote.emailjs.EmailJsRequest
@@ -56,6 +57,7 @@ class AuthViewModel @Inject constructor(
                     service_id = "service_w949h2h",
                     template_id = "template_vro0nya",
                     user_id = "77Jjy0wC9moXFpYAl",
+                    accessToken = BuildConfig.EMAILJS_PRIVATE_KEY,
                     template_params = params
                 )
                 emailJsApi.sendEmail(request)
