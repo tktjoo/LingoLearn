@@ -60,7 +60,6 @@ class AuthViewModel @Inject constructor(
                     template_id = "template_vro0nya",
                     user_id = "77Jjy0wC9moXFpYAl",
                     accessToken = BuildConfig.EMAILJS_PRIVATE_KEY,
-                    privateKey = BuildConfig.EMAILJS_PRIVATE_KEY,
                     template_params = params
                 )
                 emailJsApi.sendEmail(request)
