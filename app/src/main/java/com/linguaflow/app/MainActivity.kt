@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
                     if (isLoggedIn != null && hasCompletedOnboarding != null) {
                         val startDestination = when {
-                            isLoggedIn == false -> com.linguaflow.app.ui.navigation.Screen.Login.route
+                            isLoggedIn == false -> com.linguaflow.app.ui.navigation.Screen.AuthRoute.route
                             hasCompletedOnboarding == false -> com.linguaflow.app.ui.navigation.Screen.OnboardingLanguage.route
                             else -> com.linguaflow.app.ui.navigation.Screen.Home.route
                         }

@@ -21,7 +21,6 @@ fun RegisterScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val otpSent by viewModel.otpSent.collectAsState()
@@ -35,7 +34,6 @@ fun RegisterScreen(
             if (error != null) Text(error!!, color = MaterialTheme.colorScheme.error)
             OutlinedTextField(value = name, onValueChange = { name = it; viewModel.clearError() }, label = { Text("Nome") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = email, onValueChange = { email = it; viewModel.clearError() }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = password, onValueChange = { password = it; viewModel.clearError() }, label = { Text("Password") }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(32.dp))
             Button(onClick = { viewModel.startOtpProcess(email, name) }, modifier = Modifier.fillMaxWidth().height(56.dp), enabled = !isLoading) {
                 Text("Registar")
