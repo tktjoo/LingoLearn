@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.linguaflow.app.ui.screens.home.HomeScreen
 import com.linguaflow.app.ui.screens.practice.*
@@ -34,27 +35,44 @@ fun NavGraph(
         startDestination = startDestination,
         modifier = Modifier.padding(paddingValues)
     ) {
-        composable(Screen.Login.route) {
-            LoginScreen(
-                onNavigateToOtp = { navController.navigate(Screen.Otp.route) },
-                onNavigateToRegister = { navController.navigate(Screen.Register.route) }
-            )
-        }
-        composable(Screen.Register.route) {
-            RegisterScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToOtp = { navController.navigate(Screen.Otp.route) }
-            )
-        }
-        composable(Screen.Otp.route) {
-            OtpScreen(
-                onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                },
-                onNavigateBack = { navController.popBackStack() }
-            )
+        navigation(startDestination = Screen.Login.route, route = Screen.AuthRoute.route) {
+            composable(Screen.Login.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.AuthRoute.route)
+                }
+                val viewModel: AuthViewModel = hiltViewModel(parentEntry)
+                LoginScreen(
+                    onNavigateToOtp = { navController.navigate(Screen.Otp.route) },
+                    onNavigateToRegister = { navController.navigate(Screen.Register.route) },
+                    viewModel = viewModel
+                )
+            }
+            composable(Screen.Register.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.AuthRoute.route)
+                }
+                val viewModel: AuthViewModel = hiltViewModel(parentEntry)
+                RegisterScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToOtp = { navController.navigate(Screen.Otp.route) },
+                    viewModel = viewModel
+                )
+            }
+            composable(Screen.Otp.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.AuthRoute.route)
+                }
+                val viewModel: AuthViewModel = hiltViewModel(parentEntry)
+                OtpScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.AuthRoute.route) { inclusive = true }
+                        }
+                    },
+                    onNavigateBack = { navController.popBackStack() },
+                    viewModel = viewModel
+                )
+            }
         }
         composable(Screen.OnboardingLanguage.route) {
             OnboardingLanguageScreen(
