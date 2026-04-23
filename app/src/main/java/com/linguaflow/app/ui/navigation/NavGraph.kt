@@ -173,6 +173,14 @@ fun NavGraph(
             RoleplayScreen(title = title, onNavigateBack = { navController.popBackStack() }, viewModel = viewModel)
         }
         composable(Screen.Streak.route) { StreakScreen() }
-        composable(Screen.Profile.route) { ProfileScreen() }
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onNavigateToLogin = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }

@@ -25,9 +25,7 @@ fun OtpScreen(
     val error by viewModel.error.collectAsState()
     val targetEmail by viewModel.targetEmail.collectAsState()
 
-    // Observa o estado de login (substitui a lógica antiga do Firebase)
-    // Assumindo que você tem um fluxo de login no seu DataStore/ViewModel
-    val isLoggedIn by viewModel.hasCompletedOnboardingFlow.collectAsState(initial = false)
+    val isLoggedIn by viewModel.isLoggedInFlow.collectAsState(initial = false)
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {

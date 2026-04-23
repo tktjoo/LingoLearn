@@ -22,6 +22,7 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     val hasCompletedOnboardingFlow = userPreferences.hasCompletedOnboardingFlow
+    val isLoggedInFlow = userPreferences.isLoggedInFlow
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -54,7 +55,7 @@ class AuthViewModel @Inject constructor(
                 _generatedOtp.value = otp
                 _targetEmail.value = email
 
-                val params = mapOf("to_email" to email, "to_name" to name, "otp_code" to otp)
+                val params = mapOf("to_email" to email, "to_name" to name, "passcode" to otp)
                 val request = EmailJsRequest(
                     service_id = "service_w949h2h",
                     template_id = "template_vro0nya",
