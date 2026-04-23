@@ -62,7 +62,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = hiltViewModel()) {
     val streak by viewModel.streak.collectAsState()
     val totalWords by viewModel.totalWordsLearned.collectAsState()
     val darkThemeEnabled by viewModel.darkThemeEnabled.collectAsState()
@@ -251,6 +251,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                             subtitle = "Sair da conta atual",
                             onClick = {
                                 viewModel.logout()
+                                onNavigateToLogin()
                             }
                         )
                     }
