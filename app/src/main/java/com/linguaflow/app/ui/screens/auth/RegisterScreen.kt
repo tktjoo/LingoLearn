@@ -35,7 +35,7 @@ fun RegisterScreen(
             OutlinedTextField(value = name, onValueChange = { name = it; viewModel.clearError() }, label = { Text("Nome") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = email, onValueChange = { email = it; viewModel.clearError() }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(32.dp))
-            Button(onClick = { viewModel.startOtpProcess(email, name) }, modifier = Modifier.fillMaxWidth().height(56.dp), enabled = !isLoading) {
+            Button(onClick = { viewModel.startRegisterProcess(email, name) }, modifier = Modifier.fillMaxWidth().height(56.dp), enabled = !isLoading) {
                 Text("Registar")
             }
         }
