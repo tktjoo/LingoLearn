@@ -32,7 +32,7 @@ fun LoginScreen(
             if (error != null) Text(error!!, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(bottom = 16.dp))
             OutlinedTextField(value = email, onValueChange = { email = it; viewModel.clearError() }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp))
             Spacer(Modifier.height(32.dp))
-            Button(onClick = { viewModel.startOtpProcess(email, "Utilizador") }, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(16.dp), enabled = !isLoading) {
+            Button(onClick = { viewModel.startLoginProcess(email) }, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(16.dp), enabled = !isLoading) {
                 if (isLoading) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp)) else Text("Entrar")
             }
             TextButton(onClick = { onNavigateToRegister() }) { Text("Criar conta", color = PrimaryBlue) }
