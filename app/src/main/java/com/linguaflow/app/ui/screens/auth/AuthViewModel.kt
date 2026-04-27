@@ -112,16 +112,27 @@ class AuthViewModel @Inject constructor(
     fun verifyOtp(code: String) {
         if (code == _generatedOtp.value) {
             viewModelScope.launch {
+                val currentEmail = _targetEmail.value ?: return@launch
+                var finalName = ""
+
                 // If it's a registration, save the user
-                if (pendingRegistrationName != null && _targetEmail.value != null) {
+                if (pendingRegistrationName != null) {
                     val newUser = UserEntity(
-                        email = _targetEmail.value!!,
+                        email = currentEmail,
                         name = pendingRegistrationName!!
                     )
                     userDao.insertUser(newUser)
+                    finalName = pendingRegistrationName!!
                     pendingRegistrationName = null
+                } else {
+                    // It's a login, fetch the existing name to save in DataStore
+                    val existingUser = userDao.getUserByEmail(currentEmail)
+                    if (existingUser != null) {
+                        finalName = existingUser.name
+                    }
                 }
 
+                userPreferences.setUserProfile(name = finalName, email = currentEmail)
                 userPreferences.setLoggedIn(true)
                 _otpSent.value = false
             }

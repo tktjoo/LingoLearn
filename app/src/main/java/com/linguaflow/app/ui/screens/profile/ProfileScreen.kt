@@ -69,6 +69,8 @@ fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = h
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val dailyGoal by viewModel.dailyGoal.collectAsState()
     val targetLanguage by viewModel.targetLanguage.collectAsState()
+    val userName by viewModel.userName.collectAsState()
+    val userEmail by viewModel.userEmail.collectAsState()
 
     val availableLanguages = com.linguaflow.app.domain.model.SupportedLanguages
 
@@ -115,11 +117,19 @@ fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = h
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = viewModel.getUserName(),
+                    text = if (userName.isNotEmpty()) userName else "Utilizador",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                if (userEmail.isNotEmpty()) {
+                    Text(
+                        text = userEmail,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                }
                 val displayLanguage = availableLanguages.find { it.first == targetLanguage }?.second ?: "Inglês"
                 Text(
                     text = "A aprender $displayLanguage",

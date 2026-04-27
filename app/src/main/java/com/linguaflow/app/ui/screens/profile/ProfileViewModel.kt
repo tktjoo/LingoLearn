@@ -64,9 +64,19 @@ class ProfileViewModel @Inject constructor(
             initialValue = "en"
         )
 
-    fun getUserName(): String {
-        return "Utilizador"
-    }
+    val userName: StateFlow<String> = userPreferences.userNameFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ""
+        )
+
+    val userEmail: StateFlow<String> = userPreferences.userEmailFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ""
+        )
 
     fun setDarkTheme(enabled: Boolean) {
         viewModelScope.launch {
