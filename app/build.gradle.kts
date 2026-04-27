@@ -6,14 +6,15 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.linguaflow.app"
+    namespace = "com.lingolearn.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.linguaflow.app"
+        applicationId = "com.lingolearn.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -114,6 +115,10 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-firestore")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
