@@ -46,6 +46,14 @@ class UserPreferences @Inject constructor(
         preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] ?: false
     }
 
+    val userNameFlow: Flow<String> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USER_NAME] ?: "Utilizador"
+    }
+
+    val userEmailFlow: Flow<String> = dataStore.data.map { preferences ->
+        preferences[PreferencesKeys.USER_EMAIL] ?: ""
+    }
+
     suspend fun setDarkTheme(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME] = enabled
@@ -82,6 +90,13 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    suspend fun setUserProfile(name: String, email: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_NAME] = name
+            preferences[PreferencesKeys.USER_EMAIL] = email
+        }
+    }
+
     private object PreferencesKeys {
         val DARK_THEME = booleanPreferencesKey("dark_theme")
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
@@ -89,5 +104,7 @@ class UserPreferences @Inject constructor(
         val TARGET_LANGUAGE = stringPreferencesKey("target_language")
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
+        val USER_NAME = stringPreferencesKey("user_name")
+        val USER_EMAIL = stringPreferencesKey("user_email")
     }
 }
