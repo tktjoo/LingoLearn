@@ -10,7 +10,7 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Vocabulary : Screen("vocabulary")
     object VocabularyDetail : Screen("vocabulary_detail/{wordId}") {
-        fun createRoute(wordId: Long) = "vocabulary_detail/$wordId"
+        fun createRoute(wordId: String) = "vocabulary_detail/$wordId"
     }
     object AddVocabulary : Screen("add_vocabulary")
     object Practice : Screen("practice")

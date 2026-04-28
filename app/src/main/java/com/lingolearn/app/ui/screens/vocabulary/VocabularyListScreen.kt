@@ -51,7 +51,7 @@ import com.lingolearn.app.ui.theme.PrimaryBlue
 @Composable
 fun VocabularyListScreen(
     onNavigateToAdd: () -> Unit,
-    onNavigateToDetail: (Long) -> Unit = {},
+    onNavigateToDetail: (String) -> Unit,
     viewModel: VocabularyViewModel = hiltViewModel()
 ) {
     val vocabularyList by viewModel.vocabularyList.collectAsState()

@@ -162,21 +162,6 @@ fun StreakScreen(viewModel: StreakViewModel = hiltViewModel()) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Debug Action (To simulate practicing)
-            Button(
-                onClick = { viewModel.testAddXP() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
-            ) {
-                Text(
-                    text = "Praticar e Ganhar XP",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
         }
     }
 }

@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "streaks")
 data class StreakEntity(
-    @PrimaryKey val id: Int = 1,
+    @PrimaryKey val id: String = "default",
     val currentStreak: Int = 0,
     val longestStreak: Int = 0,
-    val lastPracticeDate: Long,
+    val lastPracticeDate: Long = 0L,
     val totalDaysPracticed: Int = 0,
     val weeklyGoal: Int = 7,
     val dailyXP: Int = 0,

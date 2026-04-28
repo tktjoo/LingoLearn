@@ -43,7 +43,7 @@ import com.lingolearn.app.ui.theme.SuccessGreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VocabularyDetailScreen(
-    wordId: Long,
+    wordId: String,
     onNavigateBack: () -> Unit,
     viewModel: VocabularyViewModel = hiltViewModel()
 ) {
