@@ -36,14 +36,14 @@ class HomeViewModel @Inject constructor(
             if (currentStreak == null) {
                 insertStreakUseCase(
                     StreakEntity(
-                        id = 1,
+                        id = "default",
                         currentStreak = 0,
                         longestStreak = 0,
                         lastPracticeDate = System.currentTimeMillis(),
                         totalDaysPracticed = 0,
                         weeklyGoal = 7,
                         dailyXP = 0,
-                        totalXP = 0
+                        totalXP = 0L
                     )
                 )
             }

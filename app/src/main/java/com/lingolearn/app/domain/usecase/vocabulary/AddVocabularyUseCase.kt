@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddVocabularyUseCase @Inject constructor(
     private val repository: VocabularyRepository
 ) {
-    suspend operator fun invoke(vocabulary: VocabularyEntity): Long {
+    suspend operator fun invoke(vocabulary: VocabularyEntity): String {
         return repository.insertVocabulary(vocabulary)
     }
 }

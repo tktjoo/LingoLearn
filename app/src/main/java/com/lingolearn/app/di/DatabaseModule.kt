@@ -3,9 +3,9 @@ package com.lingolearn.app.di
 import android.content.Context
 import androidx.room.Room
 import com.lingolearn.app.data.local.db.LingoLearnDatabase
-import com.lingolearn.app.data.local.db.dao.StreakDao
+
 import com.lingolearn.app.data.local.db.dao.UserDao
-import com.lingolearn.app.data.local.db.dao.VocabularyDao
+
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,15 +29,6 @@ object DatabaseModule {
         ).fallbackToDestructiveMigration().build()
     }
 
-    @Provides
-    fun provideVocabularyDao(database: LingoLearnDatabase): VocabularyDao {
-        return database.vocabularyDao()
-    }
-
-    @Provides
-    fun provideStreakDao(database: LingoLearnDatabase): StreakDao {
-        return database.streakDao()
-    }
 
     @Provides
     fun provideUserDao(database: LingoLearnDatabase): UserDao {

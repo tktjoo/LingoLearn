@@ -97,9 +97,9 @@ fun NavGraph(
         }
         composable(
             route = Screen.VocabularyDetail.route,
-            arguments = listOf(navArgument("wordId") { type = NavType.LongType })
+            arguments = listOf(navArgument("wordId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val wordId = backStackEntry.arguments?.getLong("wordId") ?: return@composable
+            val wordId = backStackEntry.arguments?.getString("wordId") ?: return@composable
             val parentEntry = remember(backStackEntry) {
                 try { navController.getBackStackEntry(Screen.Vocabulary.route) }
                 catch (_: Exception) { backStackEntry }

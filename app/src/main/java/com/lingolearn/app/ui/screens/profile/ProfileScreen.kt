@@ -208,18 +208,6 @@ fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = h
                             onCheckedChange = { viewModel.setDarkTheme(it) }
                         )
                         Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
-                        SettingActionRow(
-                            icon = Icons.Default.Settings,
-                            iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            title = "Meta Diária",
-                            subtitle = "$dailyGoal XP por dia",
-                            onClick = {
-                                val newGoal = if (dailyGoal == 50) 100 else 50
-                                viewModel.setDailyGoal(newGoal)
-                            }
-                        )
-                        Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
-
                         // Language Selector
                         ExposedDropdownMenuBox(
                             expanded = expandedLanguage,
