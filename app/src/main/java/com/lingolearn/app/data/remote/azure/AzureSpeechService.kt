@@ -52,14 +52,18 @@ class AzureSpeechService @Inject constructor(
         referenceText: String,
         language: String = "en-US"
     ): SpeechEvaluation? = withContext(Dispatchers.IO) {
+        var speechConfig: SpeechConfig? = null
+        var audioConfig: AudioConfig? = null
+        var recognizer: SpeechRecognizer? = null
+        var pronunciationConfig: PronunciationAssessmentConfig? = null
         try {
-            val speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion)
+            speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion)
             speechConfig.speechRecognitionLanguage = language
 
-            val audioConfig = AudioConfig.fromDefaultMicrophoneInput()
-            val recognizer = SpeechRecognizer(speechConfig, audioConfig)
+            audioConfig = AudioConfig.fromDefaultMicrophoneInput()
+            recognizer = SpeechRecognizer(speechConfig, audioConfig)
 
-            val pronunciationConfig = PronunciationAssessmentConfig(
+            pronunciationConfig = PronunciationAssessmentConfig(
                 referenceText,
                 PronunciationAssessmentGradingSystem.HundredMark,
                 PronunciationAssessmentGranularity.Word,
@@ -97,15 +101,15 @@ class AzureSpeechService @Inject constructor(
                 )
             } else null
 
-            recognizer.close()
-            audioConfig.close()
-            speechConfig.close()
-            pronunciationConfig.close()
-
             return@withContext evaluation
         } catch (e: Exception) {
             Log.e("AzureSpeechService", "Error evaluating speech", e)
             null
+        } finally {
+            recognizer?.close()
+            audioConfig?.close()
+            speechConfig?.close()
+            pronunciationConfig?.close()
         }
     }
 }

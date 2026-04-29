@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.lingolearn.app.data.local.db.LingoLearnDatabase
 
 import com.lingolearn.app.data.local.db.dao.UserDao
+import com.lingolearn.app.data.local.db.dao.SpeechHistoryDao
 
 import dagger.Module
 import dagger.Provides
@@ -33,5 +34,10 @@ object DatabaseModule {
     @Provides
     fun provideUserDao(database: LingoLearnDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    fun provideSpeechHistoryDao(database: LingoLearnDatabase): SpeechHistoryDao {
+        return database.speechHistoryDao()
     }
 }
