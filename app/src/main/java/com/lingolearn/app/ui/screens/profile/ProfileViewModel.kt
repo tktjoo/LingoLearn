@@ -6,9 +6,11 @@ import com.lingolearn.app.data.local.datastore.UserPreferences
 import com.lingolearn.app.data.local.db.entity.StreakEntity
 import com.lingolearn.app.domain.usecase.streak.GetStreakUseCase
 import com.lingolearn.app.domain.usecase.vocabulary.GetVocabularyUseCase
+import com.lingolearn.app.utils.ReminderManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -18,8 +20,20 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     getStreakUseCase: GetStreakUseCase,
     getVocabularyUseCase: GetVocabularyUseCase,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val reminderManager: ReminderManager
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            val isEnabled = userPreferences.notificationsFlow.first()
+            if (isEnabled) {
+                reminderManager.scheduleReminder()
+            } else {
+                reminderManager.cancelReminder()
+            }
+        }
+    }
 
     val streak: StateFlow<StreakEntity?> = getStreakUseCase()
         .stateIn(
@@ -87,6 +101,11 @@ class ProfileViewModel @Inject constructor(
     fun setNotifications(enabled: Boolean) {
         viewModelScope.launch {
             userPreferences.setNotifications(enabled)
+            if (enabled) {
+                reminderManager.scheduleReminder()
+            } else {
+                reminderManager.cancelReminder()
+            }
         }
     }
 
