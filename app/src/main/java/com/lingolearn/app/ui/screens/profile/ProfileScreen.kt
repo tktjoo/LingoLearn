@@ -42,6 +42,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,12 +56,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.os.Build
+import android.Manifest
 import com.lingolearn.app.ui.theme.PrimaryBlue
 import com.lingolearn.app.ui.theme.SuccessGreen
 import com.lingolearn.app.ui.theme.WarningYellow
 import androidx.compose.material.icons.filled.ExitToApp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = hiltViewModel()) {
     val streak by viewModel.streak.collectAsState()
@@ -75,6 +81,18 @@ fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = h
     val availableLanguages = com.lingolearn.app.domain.model.SupportedLanguages
 
     var expandedLanguage by remember { mutableStateOf(false) }
+
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+
+    LaunchedEffect(notificationPermissionState?.status?.isGranted) {
+        if (notificationPermissionState?.status?.isGranted == true && !notificationsEnabled) {
+            viewModel.setNotifications(true)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -196,7 +214,13 @@ fun ProfileScreen(onNavigateToLogin: () -> Unit, viewModel: ProfileViewModel = h
                             title = "Lembretes Diários",
                             subtitle = "Notificações para praticar",
                             checked = notificationsEnabled,
-                            onCheckedChange = { viewModel.setNotifications(it) }
+                            onCheckedChange = { isChecked ->
+                                if (isChecked && notificationPermissionState != null && !notificationPermissionState.status.isGranted) {
+                                    notificationPermissionState.launchPermissionRequest()
+                                } else {
+                                    viewModel.setNotifications(isChecked)
+                                }
+                            }
                         )
                         Divider(modifier = Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.outlineVariant)
                         SettingToggleRow(
