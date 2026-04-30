@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.lingolearn.app.domain.model.SpeechEvaluation
 import com.lingolearn.app.data.local.datastore.UserPreferences
 import com.lingolearn.app.domain.model.globalSentenceExercises
+import com.lingolearn.app.data.local.db.entity.SpeechPracticeHistoryEntity
 import com.lingolearn.app.domain.usecase.speech.EvaluateSpeechUseCase
+import com.lingolearn.app.domain.usecase.speech.SaveSpeechEvaluationUseCase
+import com.lingolearn.app.domain.usecase.speech.StopSpeechRecordingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +28,8 @@ sealed class SpeechUiState {
 @HiltViewModel
 class SpeechViewModel @Inject constructor(
     private val evaluateSpeechUseCase: EvaluateSpeechUseCase,
+    private val saveSpeechEvaluationUseCase: SaveSpeechEvaluationUseCase,
+    private val stopSpeechRecordingUseCase: StopSpeechRecordingUseCase,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -65,14 +70,29 @@ class SpeechViewModel @Inject constructor(
 
             _uiState.value = SpeechUiState.Evaluating
 
-            _uiState.value = SpeechUiState.Evaluating
-
             if (result != null) {
                 _uiState.value = SpeechUiState.Result(result)
+                val historyEntity = SpeechPracticeHistoryEntity(
+                    referenceText = result.referenceText ?: "",
+                    recognizedText = result.recognizedText,
+                    overallScore = result.overallScore,
+                    accuracyScore = result.accuracyScore,
+                    fluencyScore = result.fluencyScore,
+                    timestamp = result.timestamp,
+                    languageCode = targetLanguage
+                )
+                saveSpeechEvaluationUseCase(historyEntity)
             } else {
-                _uiState.value = SpeechUiState.Error("Falha ao avaliar a fala. Por favor tenta de novo.")
+                if (_uiState.value !is SpeechUiState.Idle) {
+                    _uiState.value = SpeechUiState.Error("Falha ao avaliar a fala. Por favor tenta de novo.")
+                }
             }
         }
+    }
+
+    fun stopRecording() {
+        stopSpeechRecordingUseCase()
+        _uiState.value = SpeechUiState.Idle
     }
 
     private fun mapLanguageCodeToAzureLocale(code: String): String {

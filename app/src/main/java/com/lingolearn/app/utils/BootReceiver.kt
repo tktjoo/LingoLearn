@@ -21,10 +21,15 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            val pendingResult = goAsync()
             CoroutineScope(Dispatchers.IO).launch {
-                val isEnabled = userPreferences.notificationsFlow.first()
-                if (isEnabled) {
-                    reminderManager.scheduleReminder()
+                try {
+                    val isEnabled = userPreferences.notificationsFlow.first()
+                    if (isEnabled) {
+                        reminderManager.scheduleReminder()
+                    }
+                } finally {
+                    pendingResult.finish()
                 }
             }
         }

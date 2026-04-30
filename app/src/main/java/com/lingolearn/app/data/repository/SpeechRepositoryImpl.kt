@@ -30,4 +30,8 @@ class SpeechRepositoryImpl @Inject constructor(
     override fun getSpeechHistory(): Flow<List<SpeechPracticeHistoryEntity>> {
         return speechHistoryDao.getAllSpeechHistory()
     }
+
+    override fun stopRecording() {
+        azureSpeechService.stopRecording()
+    }
 }
