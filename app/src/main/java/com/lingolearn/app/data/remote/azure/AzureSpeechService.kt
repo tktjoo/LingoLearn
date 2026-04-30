@@ -10,6 +10,8 @@ import com.microsoft.cognitiveservices.speech.PronunciationAssessmentGranularity
 import com.microsoft.cognitiveservices.speech.PronunciationAssessmentResult
 import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer
+import com.microsoft.cognitiveservices.speech.ResultReason
+import com.microsoft.cognitiveservices.speech.CancellationDetails
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +69,7 @@ class AzureSpeechService @Inject constructor(
     suspend fun evaluatePronunciation(
         referenceText: String,
         language: String = "en-US"
-    ): SpeechEvaluation? = withContext(Dispatchers.IO) {
+    ): SpeechEvaluation = withContext(Dispatchers.IO) {
         var speechConfig: SpeechConfig? = null
         var audioConfig: AudioConfig? = null
         var recognizer: SpeechRecognizer? = null
@@ -91,6 +93,13 @@ class AzureSpeechService @Inject constructor(
 
             // Blocks and waits for a single utterance
             val result = recognizer.recognizeOnceAsync().get()
+
+            if (result.reason == ResultReason.Canceled) {
+                val cancellation = CancellationDetails.fromResult(result)
+                throw RuntimeException("Erro: ${cancellation.errorDetails}")
+            } else if (result.reason == ResultReason.NoMatch) {
+                throw RuntimeException("Nenhuma fala detectada. Tenta falar de novo.")
+            }
 
             val pronunciationResult = PronunciationAssessmentResult.fromResult(result)
 
@@ -117,12 +126,14 @@ class AzureSpeechService @Inject constructor(
                     wordDetails = words,
                     timestamp = System.currentTimeMillis()
                 )
-            } else null
+            } else {
+                throw RuntimeException("Falha ao obter resultados da pronúncia.")
+            }
 
             return@withContext evaluation
         } catch (e: Exception) {
             Log.e("AzureSpeechService", "Error evaluating speech", e)
-            null
+            throw e
         } finally {
             activeRecognizer = null
             recognizer?.close()
