@@ -66,11 +66,11 @@ class SpeechViewModel @Inject constructor(
             val targetLanguage = userPreferences.targetLanguageFlow.first()
             val textToEvaluate = _currentReferenceText.value
 
-            val result = evaluateSpeechUseCase(textToEvaluate, mapLanguageCodeToAzureLocale(targetLanguage))
+            try {
+                val result = evaluateSpeechUseCase(textToEvaluate, mapLanguageCodeToAzureLocale(targetLanguage))
 
-            _uiState.value = SpeechUiState.Evaluating
+                _uiState.value = SpeechUiState.Evaluating
 
-            if (result != null) {
                 _uiState.value = SpeechUiState.Result(result)
                 val historyEntity = SpeechPracticeHistoryEntity(
                     referenceText = result.referenceText ?: "",
@@ -82,9 +82,9 @@ class SpeechViewModel @Inject constructor(
                     languageCode = targetLanguage
                 )
                 saveSpeechEvaluationUseCase(historyEntity)
-            } else {
+            } catch (e: Exception) {
                 if (_uiState.value !is SpeechUiState.Idle) {
-                    _uiState.value = SpeechUiState.Error("Falha ao avaliar a fala. Por favor tenta de novo.")
+                    _uiState.value = SpeechUiState.Error(e.message ?: "Falha ao avaliar a fala. Por favor tenta de novo.")
                 }
             }
         }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class EvaluateSpeechUseCase @Inject constructor(
     private val repository: SpeechRepository
 ) {
-    suspend operator fun invoke(referenceText: String, language: String): SpeechEvaluation? {
+    suspend operator fun invoke(referenceText: String, language: String): SpeechEvaluation {
         return repository.evaluateSpeech(referenceText, language)
     }
 }
