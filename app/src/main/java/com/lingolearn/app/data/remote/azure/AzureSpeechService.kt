@@ -114,17 +114,17 @@ class AzureSpeechService @Inject constructor(
                 val words = pronunciationResult.words.map { word ->
                     WordAssessment(
                         word = word.word,
-                        accuracyScore = word.accuracyScore.toFloat(),
+                        accuracyScore = word.accuracyScore?.toFloat() ?: 0f,
                         errorType = word.errorType
                     )
                 }
 
                 SpeechEvaluation(
-                    overallScore = pronunciationResult.pronunciationScore.toFloat(),
-                    accuracyScore = pronunciationResult.accuracyScore.toFloat(),
-                    fluencyScore = pronunciationResult.fluencyScore.toFloat(),
-                    prosodyScore = pronunciationResult.prosodyScore.toFloat(),
-                    completenessScore = pronunciationResult.completenessScore.toFloat(),
+                    overallScore = pronunciationResult.pronunciationScore?.toFloat() ?: 0f,
+                    accuracyScore = pronunciationResult.accuracyScore?.toFloat() ?: 0f,
+                    fluencyScore = pronunciationResult.fluencyScore?.toFloat() ?: 0f,
+                    prosodyScore = pronunciationResult.prosodyScore?.toFloat() ?: 0f,
+                    completenessScore = pronunciationResult.completenessScore?.toFloat() ?: 0f,
                     grammarScore = 0f, // Content assessment requires additional config
                     vocabularyScore = 0f, // Content assessment requires additional config
                     topicScore = 0f, // Content assessment requires additional config
