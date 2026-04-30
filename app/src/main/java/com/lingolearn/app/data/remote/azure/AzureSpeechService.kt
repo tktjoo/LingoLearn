@@ -25,6 +25,19 @@ class AzureSpeechService @Inject constructor(
     private val subscriptionKey = com.lingolearn.app.BuildConfig.AZURE_SPEECH_KEY
     private val serviceRegion = com.lingolearn.app.BuildConfig.AZURE_SPEECH_REGION
 
+    private var activeRecognizer: SpeechRecognizer? = null
+
+    fun stopRecording() {
+        try {
+            activeRecognizer?.stopContinuousRecognitionAsync()
+            activeRecognizer?.close()
+        } catch (e: Exception) {
+            Log.e("AzureSpeechService", "Error stopping recording", e)
+        } finally {
+            activeRecognizer = null
+        }
+    }
+
     suspend fun recognizeSpeech(language: String = "en-US"): String? = withContext(Dispatchers.IO) {
         var speechConfig: SpeechConfig? = null
         var audioConfig: AudioConfig? = null
@@ -36,12 +49,15 @@ class AzureSpeechService @Inject constructor(
             audioConfig = AudioConfig.fromDefaultMicrophoneInput()
             recognizer = SpeechRecognizer(speechConfig, audioConfig)
 
+            activeRecognizer = recognizer
+
             val result = recognizer.recognizeOnceAsync().get()
             return@withContext result.text
         } catch (e: Exception) {
             Log.e("AzureSpeechService", "Error recognizing speech", e)
             null
         } finally {
+            activeRecognizer = null
             recognizer?.close()
             audioConfig?.close()
             speechConfig?.close()
@@ -70,6 +86,8 @@ class AzureSpeechService @Inject constructor(
                 true
             )
             pronunciationConfig.applyTo(recognizer)
+
+            activeRecognizer = recognizer
 
             // Blocks and waits for a single utterance
             val result = recognizer.recognizeOnceAsync().get()
@@ -106,6 +124,7 @@ class AzureSpeechService @Inject constructor(
             Log.e("AzureSpeechService", "Error evaluating speech", e)
             null
         } finally {
+            activeRecognizer = null
             recognizer?.close()
             audioConfig?.close()
             speechConfig?.close()

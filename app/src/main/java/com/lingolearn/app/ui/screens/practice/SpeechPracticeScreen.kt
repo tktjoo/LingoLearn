@@ -126,10 +126,10 @@ fun SpeechPracticeScreen(
                     } else {
                         RecordButton(
                             isRecording = true,
-                            onClick = { /* SDK is blocking in this example, ignore clicks */ }
+                            onClick = { viewModel.stopRecording() }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("A gravar...", color = ErrorRed)
+                        Text("A gravar... Toca para parar", color = ErrorRed)
                     }
                 }
                 is SpeechUiState.Result -> {

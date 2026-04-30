@@ -9,4 +9,5 @@ interface SpeechRepository {
     suspend fun recognizeSpeech(language: String): String?
     suspend fun saveSpeechEvaluation(evaluation: SpeechPracticeHistoryEntity)
     fun getSpeechHistory(): Flow<List<SpeechPracticeHistoryEntity>>
+    fun stopRecording()
 }
