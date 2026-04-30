@@ -12,6 +12,7 @@ import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer
 import com.microsoft.cognitiveservices.speech.ResultReason
 import com.microsoft.cognitiveservices.speech.CancellationDetails
+import com.microsoft.cognitiveservices.speech.PropertyId
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,9 @@ class AzureSpeechService @Inject constructor(
             speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion)
             speechConfig.speechRecognitionLanguage = language
 
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "3000")
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, "2000")
+
             audioConfig = AudioConfig.fromDefaultMicrophoneInput()
             recognizer = SpeechRecognizer(speechConfig, audioConfig)
 
@@ -77,6 +81,9 @@ class AzureSpeechService @Inject constructor(
         try {
             speechConfig = SpeechConfig.fromSubscription(subscriptionKey, serviceRegion)
             speechConfig.speechRecognitionLanguage = language
+
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "3000")
+            speechConfig.setProperty(PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, "2000")
 
             audioConfig = AudioConfig.fromDefaultMicrophoneInput()
             recognizer = SpeechRecognizer(speechConfig, audioConfig)
