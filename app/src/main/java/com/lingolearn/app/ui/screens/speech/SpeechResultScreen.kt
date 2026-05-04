@@ -88,7 +88,8 @@ fun SpeechResultScreen(
             ) {
                 ScoreRadialChart(score = evaluation.accuracyScore, label = "Precisão")
                 ScoreRadialChart(score = evaluation.fluencyScore, label = "Fluência")
-                ScoreRadialChart(score = evaluation.prosodyScore, label = "Prosódia")
+                ScoreRadialChart(score = evaluation.prosodyScore, label = "Ritmo")
+                ScoreRadialChart(score = evaluation.completenessScore, label = "Completude")
             }
 
             Spacer(modifier = Modifier.height(32.dp))

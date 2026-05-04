@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "123456789012",
-    "project_id": "lingolearn-test",
-    "storage_bucket": "lingolearn-test.appspot.com"
+    "project_number": "512898259184",
+    "project_id": "lingolearnv2-c2f17",
+    "storage_bucket": "lingolearnv2-c2f17.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+        "mobilesdk_app_id": "1:512898259184:android:c7cb7733f75093141b4a35",
         "android_client_info": {
           "package_name": "com.lingolearn.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "dummy_api_key_for_build"
+          "current_key": "AIzaSyDp3kgW20NH_1POajc97DYAraB4XrAqj94"
         }
       ],
       "services": {
