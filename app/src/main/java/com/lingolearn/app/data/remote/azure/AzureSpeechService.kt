@@ -41,14 +41,6 @@ class AzureSpeechService @Inject constructor(
         }
     }
 
-    private fun safeScore(block: () -> Double?): Float {
-        return try {
-            block()?.toFloat() ?: 0f
-        } catch (e: NullPointerException) {
-            0f
-        }
-    }
-
     suspend fun recognizeSpeech(language: String = "en-US"): String? = withContext(Dispatchers.IO) {
         var speechConfig: SpeechConfig? = null
         var audioConfig: AudioConfig? = null
@@ -122,17 +114,17 @@ class AzureSpeechService @Inject constructor(
                 val words = pronunciationResult.words.map { word ->
                     WordAssessment(
                         word = word.word,
-                        accuracyScore = safeScore { word.accuracyScore },
+                        accuracyScore = ScoreHelper.getWordAccuracyScore(word),
                         errorType = word.errorType
                     )
                 }
 
                 SpeechEvaluation(
-                    overallScore = safeScore { pronunciationResult.pronunciationScore },
-                    accuracyScore = safeScore { pronunciationResult.accuracyScore },
-                    fluencyScore = safeScore { pronunciationResult.fluencyScore },
-                    prosodyScore = safeScore { pronunciationResult.prosodyScore },
-                    completenessScore = safeScore { pronunciationResult.completenessScore },
+                    overallScore = ScoreHelper.getPronunciationScore(pronunciationResult),
+                    accuracyScore = ScoreHelper.getAccuracyScore(pronunciationResult),
+                    fluencyScore = ScoreHelper.getFluencyScore(pronunciationResult),
+                    prosodyScore = ScoreHelper.getProsodyScore(pronunciationResult),
+                    completenessScore = ScoreHelper.getCompletenessScore(pronunciationResult),
                     grammarScore = 0f, // Content assessment requires additional config
                     vocabularyScore = 0f, // Content assessment requires additional config
                     topicScore = 0f, // Content assessment requires additional config
