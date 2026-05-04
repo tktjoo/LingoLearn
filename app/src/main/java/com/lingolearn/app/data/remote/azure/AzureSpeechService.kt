@@ -41,6 +41,14 @@ class AzureSpeechService @Inject constructor(
         }
     }
 
+    private fun safeScore(block: () -> Double?): Float {
+        return try {
+            block()?.toFloat() ?: 0f
+        } catch (e: NullPointerException) {
+            0f
+        }
+    }
+
     suspend fun recognizeSpeech(language: String = "en-US"): String? = withContext(Dispatchers.IO) {
         var speechConfig: SpeechConfig? = null
         var audioConfig: AudioConfig? = null
@@ -114,17 +122,17 @@ class AzureSpeechService @Inject constructor(
                 val words = pronunciationResult.words.map { word ->
                     WordAssessment(
                         word = word.word,
-                        accuracyScore = word.accuracyScore.toFloat(),
+                        accuracyScore = safeScore { word.accuracyScore },
                         errorType = word.errorType
                     )
                 }
 
                 SpeechEvaluation(
-                    overallScore = pronunciationResult.pronunciationScore.toFloat(),
-                    accuracyScore = pronunciationResult.accuracyScore.toFloat(),
-                    fluencyScore = pronunciationResult.fluencyScore.toFloat(),
-                    prosodyScore = pronunciationResult.prosodyScore.toFloat(),
-                    completenessScore = pronunciationResult.completenessScore.toFloat(),
+                    overallScore = safeScore { pronunciationResult.pronunciationScore },
+                    accuracyScore = safeScore { pronunciationResult.accuracyScore },
+                    fluencyScore = safeScore { pronunciationResult.fluencyScore },
+                    prosodyScore = safeScore { pronunciationResult.prosodyScore },
+                    completenessScore = safeScore { pronunciationResult.completenessScore },
                     grammarScore = 0f, // Content assessment requires additional config
                     vocabularyScore = 0f, // Content assessment requires additional config
                     topicScore = 0f, // Content assessment requires additional config
